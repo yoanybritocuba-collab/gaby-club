@@ -13,26 +13,29 @@ import {
   Loader2,
   Key,
   Moon,
-  Sun
+  Sun,
+  Upload,
+  X,
+  Eye,
+  Image as ImageIcon
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import { toast } from 'sonner'
 import { getAuth, updateProfile } from 'firebase/auth'
-import { app } from '@/lib/firebase'
-
-// Definir el tipo para los items de configuración
-type ConfigItem = {
-  name: string
-  description: string
-  action: ((checked: boolean) => void) | (() => void)
-  icon: any
-  isSwitch?: boolean
-  value?: boolean
-}
+import { app, db } from '@/lib/firebase'
+import { doc, getDoc, updateDoc } from 'firebase/firestore'
+import { uploadImage } from '@/lib/firebase-services'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 
 export default function ConfiguracionPage() {
   const router = useRouter()
@@ -41,8 +44,51 @@ export default function ConfiguracionPage() {
   const [darkMode, setDarkMode] = useState(true)
   const [adminName, setAdminName] = useState('')
   const [adminEmail, setAdminEmail] = useState('')
+  
+  // Estado para la portada
+  const [portadaData, setPortadaData] = useState({
+    portada: '',
+    titulo: '',
+    subtitulo: '',
+    direccion: '',
+    telefono: '',
+    email: '',
+    instagram: '',
+    tiktok: '',
+    whatsapp: ''
+  })
+  const [portadaFile, setPortadaFile] = useState<File | null>(null)
+  const [portadaPreview, setPortadaPreview] = useState('')
+  const [showPreview, setShowPreview] = useState(false)
+  const [isSavingPortada, setIsSavingPortada] = useState(false)
 
+  // Cargar configuración de Firestore
   useEffect(() => {
+    const loadConfiguracion = async () => {
+      try {
+        const docRef = doc(db, 'configuracion', 'vUJ7J8q0KfoLrph2QAgt')
+        const docSnap = await getDoc(docRef)
+        if (docSnap.exists()) {
+          const data = docSnap.data()
+          setPortadaData({
+            portada: data.portada || '',
+            titulo: data.titulo || 'Gavi-Club',
+            subtitulo: data.subtitulo || 'Cócteles y picaderas',
+            direccion: data.direccion || '',
+            telefono: data.telefono || '',
+            email: data.email || '',
+            instagram: data.instagram || '',
+            tiktok: data.tiktok || '',
+            whatsapp: data.whatsapp || ''
+          })
+        }
+      } catch (error) {
+        console.error('Error cargando configuración:', error)
+      }
+    }
+    
+    loadConfiguracion()
+    
     const auth = getAuth(app)
     const user = auth.currentUser
     if (user) {
@@ -50,7 +96,6 @@ export default function ConfiguracionPage() {
       setAdminEmail(user.email || 'admin@tipicocaribeno.com')
     }
     
-    // Cargar preferencias guardadas
     const savedDarkMode = localStorage.getItem('admin-dark-mode')
     if (savedDarkMode !== null) {
       const isDark = savedDarkMode === 'true'
@@ -110,7 +155,59 @@ export default function ConfiguracionPage() {
     toast.success(checked ? 'Notificaciones activadas' : 'Notificaciones desactivadas')
   }
 
-  const configSections: { title: string; icon: any; color: string; bgColor: string; items: ConfigItem[] }[] = [
+  // Manejar cambio de imagen de portada
+  const handlePortadaImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      setPortadaFile(file)
+      const reader = new FileReader()
+      reader.onloadend = () => setPortadaPreview(reader.result as string)
+      reader.readAsDataURL(file)
+    }
+  }
+
+  // Guardar configuración de portada
+  const handleSavePortada = async () => {
+    setIsSavingPortada(true)
+    toast.loading('Guardando configuración...', { id: 'saving-portada' })
+    
+    try {
+      let imagenUrl = portadaData.portada
+      
+      if (portadaFile) {
+        const timestamp = Date.now()
+        const cleanName = portadaFile.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()
+        const path = `portada/${timestamp}_${cleanName}`
+        imagenUrl = await uploadImage(portadaFile, path)
+      }
+      
+      const docRef = doc(db, 'configuracion', 'vUJ7J8q0KfoLrph2QAgt')
+      await updateDoc(docRef, {
+        portada: imagenUrl,
+        titulo: portadaData.titulo,
+        subtitulo: portadaData.subtitulo,
+        direccion: portadaData.direccion,
+        telefono: portadaData.telefono,
+        email: portadaData.email,
+        instagram: portadaData.instagram,
+        tiktok: portadaData.tiktok,
+        whatsapp: portadaData.whatsapp,
+        actualizado: new Date().toISOString()
+      })
+      
+      setPortadaData(prev => ({ ...prev, portada: imagenUrl }))
+      setPortadaFile(null)
+      setPortadaPreview('')
+      toast.success('Configuración guardada correctamente', { id: 'saving-portada' })
+    } catch (error) {
+      console.error('Error:', error)
+      toast.error('Error al guardar la configuración', { id: 'saving-portada' })
+    } finally {
+      setIsSavingPortada(false)
+    }
+  }
+
+  const configSections: { title: string; icon: any; color: string; bgColor: string; items: any[] }[] = [
     {
       title: 'Seguridad',
       icon: Shield,
@@ -167,10 +264,175 @@ export default function ConfiguracionPage() {
             Configuración del Panel
           </h1>
           <p className="text-gray-400 text-sm mt-1">
-            Gestiona la configuración de tu cuenta y preferencias del sistema
+            Gestiona la configuración de tu cuenta, portada y datos del negocio
           </p>
         </div>
       </div>
+
+      {/* Sección de Portada */}
+      <Card className="border border-gray-800 bg-gray-950/50">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-white">
+            <div className="p-2 rounded-lg bg-purple-500/10">
+              <ImageIcon className="h-4 w-4 text-purple-400" />
+            </div>
+            Portada Principal
+          </CardTitle>
+          <CardDescription className="text-gray-400">
+            Configura la imagen y texto que aparecen en la página principal
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {/* Vista previa de la portada actual */}
+          <div>
+            <Label className="text-gray-300 mb-2 block">Imagen actual</Label>
+            <div className="relative w-full h-48 rounded-lg overflow-hidden bg-gray-900 border border-gray-700">
+              {portadaData.portada ? (
+                <img 
+                  src={portadaData.portada} 
+                  alt="Portada actual"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="flex items-center justify-center h-full text-gray-500">
+                  No hay imagen de portada
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Subir nueva imagen */}
+          <div>
+            <Label className="text-gray-300 mb-2 block">Cambiar imagen</Label>
+            <div className="flex items-center gap-4">
+              {portadaPreview ? (
+                <div className="relative">
+                  <img 
+                    src={portadaPreview} 
+                    alt="Preview" 
+                    className="h-32 w-48 rounded-lg object-cover border-2 border-blue-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPortadaFile(null)
+                      setPortadaPreview('')
+                    }}
+                    className="absolute -right-2 -top-2 rounded-full bg-red-500 p-1 text-white"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowPreview(true)}
+                    className="absolute bottom-1 right-1 rounded-full bg-black/70 p-1 text-white"
+                  >
+                    <Eye className="h-3 w-3" />
+                  </button>
+                </div>
+              ) : (
+                <label className="flex h-32 w-48 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-700 hover:border-blue-500 transition-colors">
+                  <Upload className="h-6 w-6 text-gray-400" />
+                  <span className="text-xs text-gray-400 mt-1">Subir imagen</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handlePortadaImageChange}
+                  />
+                </label>
+              )}
+              <p className="text-xs text-gray-500">Recomendado: 1920x1080px</p>
+            </div>
+          </div>
+
+          {/* Título y subtítulo */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label className="text-gray-300">Título principal</Label>
+              <Input
+                value={portadaData.titulo}
+                onChange={(e) => setPortadaData(prev => ({ ...prev, titulo: e.target.value }))}
+                className="mt-1 bg-gray-900 border-gray-700 text-white"
+                placeholder="Ej: Gavi-Club"
+              />
+            </div>
+            <div>
+              <Label className="text-gray-300">Subtítulo</Label>
+              <Input
+                value={portadaData.subtitulo}
+                onChange={(e) => setPortadaData(prev => ({ ...prev, subtitulo: e.target.value }))}
+                className="mt-1 bg-gray-900 border-gray-700 text-white"
+                placeholder="Ej: Cócteles y picaderas"
+              />
+            </div>
+          </div>
+
+          {/* Información del negocio */}
+          <div className="border-t border-gray-800 pt-4 mt-2">
+            <h3 className="text-white font-medium mb-4">Información del negocio</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label className="text-gray-300">Dirección</Label>
+                <Input
+                  value={portadaData.direccion}
+                  onChange={(e) => setPortadaData(prev => ({ ...prev, direccion: e.target.value }))}
+                  className="mt-1 bg-gray-900 border-gray-700 text-white"
+                />
+              </div>
+              <div>
+                <Label className="text-gray-300">Teléfono</Label>
+                <Input
+                  value={portadaData.telefono}
+                  onChange={(e) => setPortadaData(prev => ({ ...prev, telefono: e.target.value }))}
+                  className="mt-1 bg-gray-900 border-gray-700 text-white"
+                />
+              </div>
+              <div>
+                <Label className="text-gray-300">Email</Label>
+                <Input
+                  value={portadaData.email}
+                  onChange={(e) => setPortadaData(prev => ({ ...prev, email: e.target.value }))}
+                  className="mt-1 bg-gray-900 border-gray-700 text-white"
+                />
+              </div>
+              <div>
+                <Label className="text-gray-300">WhatsApp</Label>
+                <Input
+                  value={portadaData.whatsapp}
+                  onChange={(e) => setPortadaData(prev => ({ ...prev, whatsapp: e.target.value }))}
+                  className="mt-1 bg-gray-900 border-gray-700 text-white"
+                />
+              </div>
+              <div>
+                <Label className="text-gray-300">Instagram</Label>
+                <Input
+                  value={portadaData.instagram}
+                  onChange={(e) => setPortadaData(prev => ({ ...prev, instagram: e.target.value }))}
+                  className="mt-1 bg-gray-900 border-gray-700 text-white"
+                />
+              </div>
+              <div>
+                <Label className="text-gray-300">TikTok</Label>
+                <Input
+                  value={portadaData.tiktok}
+                  onChange={(e) => setPortadaData(prev => ({ ...prev, tiktok: e.target.value }))}
+                  className="mt-1 bg-gray-900 border-gray-700 text-white"
+                />
+              </div>
+            </div>
+          </div>
+
+          <Button
+            onClick={handleSavePortada}
+            disabled={isSavingPortada}
+            className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600"
+          >
+            {isSavingPortada && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            Guardar configuración
+          </Button>
+        </CardContent>
+      </Card>
 
       {/* Perfil del Administrador */}
       <Card className="border border-gray-800 bg-gray-950/50">
@@ -288,6 +550,16 @@ export default function ConfiguracionPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Modal de vista previa */}
+      <Dialog open={showPreview} onOpenChange={setShowPreview}>
+        <DialogContent className="bg-gray-950 border-gray-800 max-w-4xl">
+          <DialogHeader>
+            <DialogTitle className="text-white">Vista previa de la imagen</DialogTitle>
+          </DialogHeader>
+          <img src={portadaPreview} alt="Preview" className="rounded-lg w-full" />
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

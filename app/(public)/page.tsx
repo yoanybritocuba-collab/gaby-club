@@ -8,7 +8,14 @@ import { Card, CardContent } from '@/components/ui/card'
 import { SuggestionCard } from '@/components/suggestion-card'
 import { useI18n } from '@/lib/i18n'
 import { useStore } from '@/lib/store'
+import { db } from '@/lib/firebase'
+import { doc, getDoc } from 'firebase/firestore'
 
+const WHATSAPP_NUMBER = "34682491444"
+const WHATSAPP_MESSAGE = "Hola, me gustaría hacer una reserva"
+const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`
+
+// Carrusel de imágenes (para las otras diapositivas)
 const carouselImages = [
   {
     url: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1",
@@ -32,12 +39,6 @@ const carouselImages = [
   }
 ]
 
-// Número de WhatsApp
-const WHATSAPP_NUMBER = "34682491444"
-const WHATSAPP_MESSAGE = "Hola, me gustaría hacer una reserva"
-const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`
-
-// Componente Link que oculta la URL en la barra de estado
 function HiddenLink({ href, children, className }: { href: string; children: React.ReactNode; className?: string }) {
   const handleMouseEnter = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault()
@@ -50,7 +51,6 @@ function HiddenLink({ href, children, className }: { href: string; children: Rea
   )
 }
 
-// Componente para enlaces WhatsApp que oculta la URL
 function HiddenWhatsAppLink({ href, children, className }: { href: string; children: React.ReactNode; className?: string }) {
   const handleMouseEnter = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault()
@@ -68,25 +68,41 @@ export default function HomePage() {
   const { getSuggestions, isLoading } = useStore()
   const [currentImage, setCurrentImage] = useState(0)
   const [isTransitioning, setIsTransitioning] = useState(false)
+  const [portadaUrl, setPortadaUrl] = useState<string>('')
+  const [titulo, setTitulo] = useState('')
+  const [subtitulo, setSubtitulo] = useState('')
+
+  // Cargar configuración de portada desde Firestore
+  useEffect(() => {
+    const loadPortada = async () => {
+      try {
+        const docRef = doc(db, 'configuracion', 'vUJ7J8q0KfoLrph2QAgt')
+        const docSnap = await getDoc(docRef)
+        if (docSnap.exists()) {
+          const data = docSnap.data()
+          setPortadaUrl(data.portada || '')
+          setTitulo(data.titulo || 'Gavi-Club')
+          setSubtitulo(data.subtitulo || 'Cócteles y picaderas')
+        }
+      } catch (error) {
+        console.error('Error cargando portada:', error)
+      }
+    }
+    loadPortada()
+  }, [])
 
   const suggestions = getSuggestions().slice(0, 6)
 
-  // Auto-play cada 5 segundos
   useEffect(() => {
     const interval = setInterval(() => {
-      nextImageAuto()
+      setIsTransitioning(true)
+      setTimeout(() => {
+        setCurrentImage((prev) => (prev + 1) % carouselImages.length)
+        setTimeout(() => setIsTransitioning(false), 50)
+      }, 50)
     }, 5000)
-
     return () => clearInterval(interval)
   }, [currentImage])
-
-  const nextImageAuto = () => {
-    setIsTransitioning(true)
-    setTimeout(() => {
-      setCurrentImage((prev) => (prev + 1) % carouselImages.length)
-      setTimeout(() => setIsTransitioning(false), 50)
-    }, 50)
-  }
 
   if (isLoading) {
     return (
@@ -103,7 +119,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Carrusel */}
+      {/* Hero Carrusel - Primera imagen usa la portada de Firestore */}
       <section className="relative h-[85vh] min-h-[600px] overflow-hidden">
         <div className="absolute inset-0">
           <div 
@@ -112,7 +128,7 @@ export default function HomePage() {
           >
             <div 
               className="absolute inset-0 bg-cover bg-center"
-              style={{ backgroundImage: `url(${carouselImages[currentImage].url})` }}
+              style={{ backgroundImage: `url(${currentImage === 0 && portadaUrl ? portadaUrl : carouselImages[currentImage].url})` }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
           </div>
@@ -150,20 +166,38 @@ export default function HomePage() {
           ))}
         </div>
 
-        {/* Texto central */}
+        {/* Texto central - Usa título y subtítulo desde Firestore en la primera diapositiva */}
         <div className="relative z-10 flex h-full flex-col items-center justify-center text-center text-white px-4">
           <div className={`transform transition-all duration-700 delay-100 ${isTransitioning ? 'opacity-0 translate-y-10' : 'opacity-100 translate-y-0'}`}>
-            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-1.5 mb-6">
-              <Sparkles className="h-4 w-4 text-amber-400" />
-              <span className="text-xs uppercase tracking-wider">{t('common.since') || 'Desde 1985'}</span>
-            </div>
-            <h1 className="mb-4 font-display text-5xl md:text-7xl lg:text-8xl font-bold">
-              {t(carouselImages[currentImage].titleKey)}
-            </h1>
-            <div className="h-0.5 w-20 bg-gradient-to-r from-blue-600 via-red-600 to-blue-600 mx-auto my-6 rounded-full" />
-            <p className="mb-8 max-w-2xl text-lg md:text-xl text-white/90">
-              {t(carouselImages[currentImage].subtitleKey)}
-            </p>
+            {currentImage === 0 && portadaUrl ? (
+              <>
+                <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-1.5 mb-6">
+                  <Sparkles className="h-4 w-4 text-amber-400" />
+                  <span className="text-xs uppercase tracking-wider">Bienvenido</span>
+                </div>
+                <h1 className="mb-4 font-display text-5xl md:text-7xl lg:text-8xl font-bold">
+                  {titulo}
+                </h1>
+                <div className="h-0.5 w-20 bg-gradient-to-r from-blue-600 via-red-600 to-blue-600 mx-auto my-6 rounded-full" />
+                <p className="mb-8 max-w-2xl text-lg md:text-xl text-white/90">
+                  {subtitulo}
+                </p>
+              </>
+            ) : (
+              <>
+                <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-1.5 mb-6">
+                  <Sparkles className="h-4 w-4 text-amber-400" />
+                  <span className="text-xs uppercase tracking-wider">{t('common.since') || 'Desde 1985'}</span>
+                </div>
+                <h1 className="mb-4 font-display text-5xl md:text-7xl lg:text-8xl font-bold">
+                  {t(carouselImages[currentImage].titleKey)}
+                </h1>
+                <div className="h-0.5 w-20 bg-gradient-to-r from-blue-600 via-red-600 to-blue-600 mx-auto my-6 rounded-full" />
+                <p className="mb-8 max-w-2xl text-lg md:text-xl text-white/90">
+                  {t(carouselImages[currentImage].subtitleKey)}
+                </p>
+              </>
+            )}
             <div className="flex gap-4 justify-center flex-wrap">
               <HiddenLink href="/carta">
                 <Button variant="default" size="lg" className="text-lg px-8 rounded-full">
