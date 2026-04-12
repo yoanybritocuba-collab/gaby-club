@@ -11,6 +11,7 @@ import { getAllProductos, getCategoriasActivasGlobales, type Producto, type Cate
 import { useI18n } from '@/lib/i18n'
 import { db } from '@/lib/firebase'
 import { doc, getDoc } from 'firebase/firestore'
+import { LineaInformativa } from '@/components/LineaInformativa'
 
 export default function MenuPage() {
   const { t, language, getLocalizedField } = useI18n()
@@ -28,11 +29,7 @@ export default function MenuPage() {
   
   const [cartaTitulo, setCartaTitulo] = useState('La Carta')
   const [cartaImagen, setCartaImagen] = useState('')
-  const [lineaActiva, setLineaActiva] = useState(false)
-  const [lineaTexto, setLineaTexto] = useState('')
-  const [lineaColor, setLineaColor] = useState('#ffffff')
-  const [lineaAncho, setLineaAncho] = useState('100')
-  const [lineaPosicion, setLineaPosicion] = useState('center')
+  const [lineaConfig, setLineaConfig] = useState<any>(null)
   const [isLoadingConfig, setIsLoadingConfig] = useState(true)
   
   const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -46,11 +43,18 @@ export default function MenuPage() {
           const data = docSnap.data()
           setCartaTitulo(data.cartaTitulo || 'La Carta')
           setCartaImagen(data.cartaImagen || '')
-          setLineaActiva(data.lineaActiva || false)
-          setLineaTexto(data.lineaTexto || '')
-          setLineaColor(data.lineaColor || '#ffffff')
-          setLineaAncho(data.lineaAncho || '100')
-          setLineaPosicion(data.lineaPosicion || 'center')
+          setLineaConfig({
+            activo: data.lineaActiva || false,
+            texto: data.lineaTexto || '',
+            colorTexto: data.lineaColorTexto || '#ffffff',
+            colorFondo: data.lineaColorFondo || '#000000',
+            tamanioLetra: data.lineaTamanioLetra || 16,
+            tipoLetra: data.lineaTipoLetra || 'Arial',
+            velocidad: data.lineaVelocidad || 10,
+            tiempoEntre: data.lineaTiempoEntre || 2,
+            ancho: data.lineaAncho || 100,
+            posicion: data.lineaPosicion || 'center'
+          })
         }
       } catch (error) {
         console.error('Error cargando configuración carta:', error)
@@ -299,6 +303,9 @@ export default function MenuPage() {
 
   return (
     <div className="min-h-screen bg-black">
+      {/* Línea Informativa */}
+      {lineaConfig && <LineaInformativa config={lineaConfig} />}
+
       {/* Hero Banner */}
       {cartaImagen && (
         <div className="relative h-[50vh] min-h-[400px] w-full overflow-hidden">
@@ -306,11 +313,6 @@ export default function MenuPage() {
           <div className="absolute inset-0 bg-black/50" />
           <div className="relative z-10 flex h-full flex-col items-center justify-center text-center text-white px-4">
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-4">{cartaTitulo}</h1>
-            {lineaActiva && (
-              <div className="mt-4" style={{ textAlign: lineaPosicion as any, width: `${lineaAncho}%`, marginLeft: 'auto', marginRight: 'auto' }}>
-                <p className="text-sm md:text-base" style={{ color: lineaColor }}>{lineaTexto}</p>
-              </div>
-            )}
           </div>
         </div>
       )}
