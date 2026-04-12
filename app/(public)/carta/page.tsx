@@ -345,9 +345,10 @@ export default function MenuPage() {
     <div className="min-h-screen bg-black">
       {lineaConfig && <LineaInformativa config={lineaConfig} />}
 
+      {/* Hero Banner - Imagen ajustada a pantalla completa */}
       {cartaImagen && (
         <div className="relative h-[50vh] min-h-[400px] w-full overflow-hidden">
-          <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${cartaImagen})` }} />
+          <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${cartaImagen})` }} />
           <div className="absolute inset-0 bg-black/50" />
           <div className="relative z-10 flex h-full flex-col items-center justify-center text-center text-white px-4">
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-4">{getCartaTitulo()}</h1>

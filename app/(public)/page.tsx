@@ -30,7 +30,6 @@ export default function HomePage() {
           const data = docSnap.data()
           setPortadaUrl(data.portada || '')
           
-          // Mostrar título y subtítulo según el idioma seleccionado
           if (language === 'en') {
             setTitulo(data.tituloEn || data.titulo || "Gaby's Club")
             setSubtitulo(data.subtituloEn || data.subtitulo || 'The best cocktails in the city')
@@ -90,9 +89,13 @@ export default function HomePage() {
     <div className="min-h-screen bg-black">
       {lineaConfig && <LineaInformativa config={lineaConfig} />}
 
-      <section className="relative h-[85vh] min-h-[600px] overflow-hidden">
+      {/* Hero Section - Imagen ajustada a pantalla completa */}
+      <section className="relative h-screen w-full overflow-hidden">
         <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${portadaUrl || '/default-bg.jpg'})` }} />
+          <div 
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{ backgroundImage: `url(${portadaUrl || '/default-bg.jpg'})` }}
+          />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
         </div>
         <div className="relative z-10 flex h-full flex-col items-center justify-center text-center text-white px-4">
