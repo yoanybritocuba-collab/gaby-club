@@ -13,8 +13,6 @@ import { doc, getDoc, updateDoc } from 'firebase/firestore'
 import { translateText } from '@/lib/translate'
 import { Loader2, ArrowLeft } from 'lucide-react'
 
-export const dynamic = 'force-dynamic'
-
 export default function EditarCategoriaPage() {
   const router = useRouter()
   const params = useParams()

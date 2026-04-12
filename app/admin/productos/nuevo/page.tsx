@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, Upload, X, Eye, Loader2, CheckCircle, AlertCircle } from 'lucide-react'
+import { ArrowLeft, Upload, X, Eye, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -113,10 +113,6 @@ export default function NewProductPage() {
     }
   }
 
-  const getCategoryName = (cat: CategoriaGlobal) => {
-    return cat.nombre || 'Sin nombre'
-  }
-
   if (isLoading) {
     return (
       <div className="flex h-[60vh] items-center justify-center">
@@ -141,7 +137,7 @@ export default function NewProductPage() {
         <Card className="border-gray-800 bg-gray-950/50">
           <CardContent className="p-6">
             <Label className="text-white">Imagen del producto</Label>
-            <p className="text-sm text-gray-400 mb-4">Sube una foto del plato</p>
+            <p className="text-sm text-gray-400 mb-4">Sube una foto del producto</p>
             <div className="flex items-center gap-6">
               {imagePreview ? (
                 <div className="relative group">
@@ -196,7 +192,7 @@ export default function NewProductPage() {
                 value={formData.nombre}
                 onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
                 className="mt-1 bg-gray-900 border-gray-700 text-white"
-                placeholder="Ej: Mangú"
+                placeholder="Ej: Mojito"
               />
               <p className="text-xs text-gray-500 mt-1">Se traducirá automáticamente al inglés</p>
             </div>
@@ -208,7 +204,7 @@ export default function NewProductPage() {
                 onChange={(e) => setFormData({ ...formData, descripcion: e.target.value })}
                 rows={3}
                 className="mt-1 bg-gray-900 border-gray-700 text-white"
-                placeholder="Descripción del plato"
+                placeholder="Descripción del producto"
               />
               <p className="text-xs text-gray-500 mt-1">Se traducirá automáticamente al inglés</p>
             </div>
@@ -223,7 +219,7 @@ export default function NewProductPage() {
                   value={formData.precio}
                   onChange={(e) => setFormData({ ...formData, precio: e.target.value })}
                   className="mt-1 bg-gray-900 border-gray-700 text-white"
-                  placeholder="12.90"
+                  placeholder="8.50"
                 />
               </div>
               <div>
@@ -237,7 +233,7 @@ export default function NewProductPage() {
                   <option value="">Selecciona una categoría</option>
                   {categories.map((cat) => (
                     <option key={cat.id} value={cat.id}>
-                      {getCategoryName(cat)}
+                      {cat.nombre}
                     </option>
                   ))}
                 </select>
@@ -272,7 +268,7 @@ export default function NewProductPage() {
         <div className="flex gap-3">
           <Button type="submit" className="flex-1 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600" disabled={isSaving}>
             {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {isSaving ? 'Traduciendo y guardando...' : 'Guardar (traduce automáticamente)'}
+            {isSaving ? 'Traduciendo y guardando...' : 'Guardar producto'}
           </Button>
           <Button type="button" variant="outline" onClick={() => router.back()}>
             Cancelar

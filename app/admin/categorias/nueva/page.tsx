@@ -10,6 +10,7 @@ import { Switch } from '@/components/ui/switch'
 import { toast } from 'sonner'
 import { db } from '@/lib/firebase'
 import { collection, addDoc } from 'firebase/firestore'
+import { translateText } from '@/lib/translate'
 import { Loader2 } from 'lucide-react'
 
 export default function NuevaCategoriaPage() {
@@ -30,23 +31,23 @@ export default function NuevaCategoriaPage() {
     }
 
     setIsLoading(true)
-    toast.loading('Guardando...', { id: 'saving' })
+    toast.loading('Traduciendo y guardando...', { id: 'saving' })
     
     try {
-      const docRef = await addDoc(collection(db, 'categorias_globales'), {
+      const translatedName = await translateText(formData.nombre, 'en')
+      
+      await addDoc(collection(db, 'categorias_globales'), {
         nombre: formData.nombre,
-        nameEn: formData.nombre,
+        nameEn: translatedName,
         activo: formData.activo,
         order: formData.order
       })
       
-      console.log('Creada con ID:', docRef.id)
       toast.success('Categoría creada correctamente', { id: 'saving' })
       router.push('/admin/categorias')
     } catch (error) {
       console.error('Error:', error)
-      const errorMessage = error instanceof Error ? error.message : 'Error desconocido'
-      toast.error('Error al crear la categoría: ' + errorMessage, { id: 'saving' })
+      toast.error('Error al crear la categoría', { id: 'saving' })
     } finally {
       setIsLoading(false)
     }
@@ -57,16 +58,17 @@ export default function NuevaCategoriaPage() {
       <Card>
         <CardHeader>
           <CardTitle>Nueva Categoría</CardTitle>
+          <p className="text-sm text-gray-500">El nombre se traducirá automáticamente al inglés usando Google Translate</p>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <Label>Nombre *</Label>
+              <Label>Nombre (español) *</Label>
               <Input
                 value={formData.nombre}
                 onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
                 required
-                placeholder="Ej: Cócteles"
+                placeholder="Ej: Entradas"
               />
             </div>
             
@@ -90,7 +92,7 @@ export default function NuevaCategoriaPage() {
             <div className="flex gap-2 pt-4">
               <Button type="submit" disabled={isLoading} className="flex-1">
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {isLoading ? 'Guardando...' : 'Guardar categoría'}
+                {isLoading ? 'Traduciendo y guardando...' : 'Guardar (traduce automáticamente)'}
               </Button>
               <Button type="button" variant="outline" onClick={() => router.back()}>
                 Cancelar

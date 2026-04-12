@@ -92,7 +92,6 @@ export default function EditProductPage() {
     }
   }
 
-  // Función para traducir TODO y guardar
   const handleTranslateAndSave = async () => {
     if (!formData.nombre.trim()) {
       toast.error('El nombre en español es obligatorio')
@@ -108,7 +107,6 @@ export default function EditProductPage() {
     toast.loading('Traduciendo y guardando...', { id: 'saving' })
     
     try {
-      // Traducir nombre y descripción
       const [translatedName, translatedDescription] = await Promise.all([
         translateText(formData.nombre, 'en'),
         formData.descripcion ? translateText(formData.descripcion, 'en') : Promise.resolve('')
@@ -161,7 +159,7 @@ export default function EditProductPage() {
       if (imageFile) {
         const timestamp = Date.now()
         const cleanName = formData.nombre.replace(/[^a-z0-9]/gi, '_').toLowerCase()
-        const path = `platos/${timestamp}_${cleanName}`
+        const path = `productos/${timestamp}_${cleanName}`
         imagenUrl = await uploadImage(imageFile, path)
       }
 
@@ -190,7 +188,7 @@ export default function EditProductPage() {
   if (isLoading) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-amber-500" />
+        <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
       </div>
     )
   }
@@ -203,7 +201,7 @@ export default function EditProductPage() {
             <ArrowLeft className="mr-2 h-4 w-4" />
             Volver
           </Button>
-          <h1 className="text-xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
+          <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-red-600 bg-clip-text text-transparent">
             Editar Producto
           </h1>
         </div>
@@ -216,16 +214,16 @@ export default function EditProductPage() {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <Card>
+        <Card className="border-gray-800 bg-gray-950/50">
           <CardContent className="p-4">
-            <Label>Imagen del producto</Label>
+            <Label className="text-white">Imagen del producto</Label>
             <div className="flex flex-col sm:flex-row items-center gap-4 mt-3">
               {imagePreview ? (
                 <div className="relative group">
                   <img
                     src={imagePreview}
                     alt="Preview"
-                    className="h-24 w-24 rounded-lg object-cover border-2 border-primary"
+                    className="h-24 w-24 rounded-lg object-cover border-2 border-blue-500"
                   />
                   <button
                     type="button"
@@ -239,9 +237,9 @@ export default function EditProductPage() {
                   </button>
                 </div>
               ) : (
-                <label className="flex h-24 w-24 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed">
-                  <Upload className="h-6 w-6" />
-                  <span className="text-xs">Subir</span>
+                <label className="flex h-24 w-24 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-700">
+                  <Upload className="h-6 w-6 text-gray-400" />
+                  <span className="text-xs text-gray-400">Subir</span>
                   <input
                     type="file"
                     accept="image/*"
@@ -254,24 +252,24 @@ export default function EditProductPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-gray-800 bg-gray-950/50">
           <CardContent className="space-y-4 p-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <Label>🇪🇸 Nombre (Español) *</Label>
+                <Label className="text-white">🇪🇸 Nombre (Español) *</Label>
                 <Input
                   required
                   value={formData.nombre}
                   onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
-                  className="mt-1"
+                  className="mt-1 bg-gray-900 border-gray-700 text-white"
                 />
               </div>
               <div>
-                <Label>🇺🇸 Nombre (Inglés)</Label>
+                <Label className="text-white">🇺🇸 Nombre (Inglés)</Label>
                 <Input
                   value={formData.nameEn}
                   onChange={(e) => setFormData({ ...formData, nameEn: e.target.value })}
-                  className="mt-1"
+                  className="mt-1 bg-gray-900 border-gray-700 text-white"
                   placeholder="English name"
                 />
                 <p className="text-xs text-gray-500 mt-1">Si lo dejas vacío, se traducirá automáticamente al guardar</p>
@@ -280,22 +278,22 @@ export default function EditProductPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <Label>🇪🇸 Descripción (Español)</Label>
+                <Label className="text-white">🇪🇸 Descripción (Español)</Label>
                 <Textarea
                   value={formData.descripcion}
                   onChange={(e) => setFormData({ ...formData, descripcion: e.target.value })}
                   rows={3}
-                  className="mt-1"
-                  placeholder="Descripción del plato"
+                  className="mt-1 bg-gray-900 border-gray-700 text-white"
+                  placeholder="Descripción del producto"
                 />
               </div>
               <div>
-                <Label>🇺🇸 Descripción (Inglés)</Label>
+                <Label className="text-white">🇺🇸 Descripción (Inglés)</Label>
                 <Textarea
                   value={formData.descriptionEn}
                   onChange={(e) => setFormData({ ...formData, descriptionEn: e.target.value })}
                   rows={3}
-                  className="mt-1"
+                  className="mt-1 bg-gray-900 border-gray-700 text-white"
                   placeholder="English description"
                 />
               </div>
@@ -303,23 +301,23 @@ export default function EditProductPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label>Precio (€) *</Label>
+                <Label className="text-white">Precio (€) *</Label>
                 <Input
                   required
                   type="number"
                   step="0.01"
                   value={formData.precio}
                   onChange={(e) => setFormData({ ...formData, precio: e.target.value })}
-                  className="mt-1"
+                  className="mt-1 bg-gray-900 border-gray-700 text-white"
                 />
               </div>
               <div>
-                <Label>Categoría *</Label>
+                <Label className="text-white">Categoría *</Label>
                 <select
                   required
                   value={formData.categoriaGlobalId}
                   onChange={(e) => setFormData({ ...formData, categoriaGlobalId: e.target.value })}
-                  className="w-full rounded-md border p-2 mt-1"
+                  className="w-full rounded-md border border-gray-700 bg-gray-900 p-2 mt-1 text-white"
                 >
                   <option value="">Seleccionar</option>
                   {categories.map((cat) => (
@@ -332,15 +330,15 @@ export default function EditProductPage() {
             </div>
 
             <div className="flex gap-4 pt-2">
-              <div className="flex items-center justify-between flex-1 border rounded-lg p-3">
-                <Label>Disponible</Label>
+              <div className="flex items-center justify-between flex-1 border border-gray-800 rounded-lg p-3">
+                <Label className="text-white">Disponible</Label>
                 <Switch
                   checked={formData.activo}
                   onCheckedChange={(checked) => setFormData({ ...formData, activo: checked })}
                 />
               </div>
-              <div className="flex items-center justify-between flex-1 border rounded-lg p-3">
-                <Label>Destacado ⭐</Label>
+              <div className="flex items-center justify-between flex-1 border border-gray-800 rounded-lg p-3">
+                <Label className="text-white">Destacado ⭐</Label>
                 <Switch
                   checked={formData.destacado}
                   onCheckedChange={(checked) => setFormData({ ...formData, destacado: checked })}
@@ -364,7 +362,7 @@ export default function EditProductPage() {
             )}
             {isTranslating ? 'Traduciendo y guardando...' : 'Traducir y Guardar'}
           </Button>
-          <Button type="submit" className="flex-1" disabled={isSaving}>
+          <Button type="submit" className="flex-1 bg-gradient-to-r from-blue-600 to-blue-500" disabled={isSaving}>
             {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {isSaving ? 'Guardando...' : 'Guardar sin traducir'}
           </Button>
@@ -375,9 +373,9 @@ export default function EditProductPage() {
       </form>
 
       <Dialog open={showPreview} onOpenChange={setShowPreview}>
-        <DialogContent>
+        <DialogContent className="bg-gray-950 border-gray-800">
           <DialogHeader>
-            <DialogTitle>Vista previa</DialogTitle>
+            <DialogTitle className="text-white">Vista previa</DialogTitle>
           </DialogHeader>
           {imagePreview && (
             <img src={imagePreview} alt="Preview" className="rounded-lg" />
