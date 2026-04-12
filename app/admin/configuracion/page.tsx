@@ -31,7 +31,12 @@ export default function ConfiguracionPage() {
   
   // Portada Principal
   const [portadaData, setPortadaData] = useState({
-    portada: '', titulo: '', subtitulo: '', direccion: '', telefono: '', email: '', instagram: '', tiktok: '', whatsapp: ''
+    portada: '', 
+    titulo: '', 
+    subtitulo: '', 
+    tituloEn: '', tituloFr: '', tituloDe: '', tituloRu: '',
+    subtituloEn: '', subtituloFr: '', subtituloDe: '', subtituloRu: '',
+    direccion: '', telefono: '', email: '', instagram: '', tiktok: '', whatsapp: ''
   })
   const [portadaFile, setPortadaFile] = useState<File | null>(null)
   const [portadaPreview, setPortadaPreview] = useState('')
@@ -82,7 +87,11 @@ export default function ConfiguracionPage() {
         if (docSnap.exists()) {
           const data = docSnap.data()
           setPortadaData({
-            portada: data.portada || '', titulo: data.titulo || "Gaby's Club", subtitulo: data.subtitulo || 'Cócteles y picaderas',
+            portada: data.portada || '', 
+            titulo: data.titulo || "Gaby's Club", 
+            subtitulo: data.subtitulo || 'Los mejores cócteles de la ciudad',
+            tituloEn: data.tituloEn || '', tituloFr: data.tituloFr || '', tituloDe: data.tituloDe || '', tituloRu: data.tituloRu || '',
+            subtituloEn: data.subtituloEn || '', subtituloFr: data.subtituloFr || '', subtituloDe: data.subtituloDe || '', subtituloRu: data.subtituloRu || '',
             direccion: data.direccion || '', telefono: data.telefono || '', email: data.email || '',
             instagram: data.instagram || '', tiktok: data.tiktok || '', whatsapp: data.whatsapp || ''
           })
@@ -189,18 +198,33 @@ export default function ConfiguracionPage() {
 
   const handleSavePortada = async () => {
     setIsSavingPortada(true)
-    toast.loading('Guardando...', { id: 'saving' })
+    toast.loading('Guardando y traduciendo portada...', { id: 'saving' })
     try {
       let imagenUrl = portadaData.portada
       if (portadaFile) {
         imagenUrl = await uploadImage(portadaFile, `portada/${Date.now()}_${portadaFile.name}`)
       }
+      
+      // Traducir título y subtítulo a 4 idiomas
+      const tituloTranslations = await translateToAllLanguages(portadaData.titulo)
+      const subtituloTranslations = await translateToAllLanguages(portadaData.subtitulo)
+      
       await updateDoc(doc(db, 'configuracion', 'vUJ7J8q0KfoLrph2QAgt'), {
-        portada: imagenUrl, titulo: portadaData.titulo, subtitulo: portadaData.subtitulo,
+        portada: imagenUrl, 
+        titulo: portadaData.titulo, 
+        subtitulo: portadaData.subtitulo,
+        tituloEn: tituloTranslations.en || portadaData.titulo,
+        tituloFr: tituloTranslations.fr || portadaData.titulo,
+        tituloDe: tituloTranslations.de || portadaData.titulo,
+        tituloRu: tituloTranslations.ru || portadaData.titulo,
+        subtituloEn: subtituloTranslations.en || portadaData.subtitulo,
+        subtituloFr: subtituloTranslations.fr || portadaData.subtitulo,
+        subtituloDe: subtituloTranslations.de || portadaData.subtitulo,
+        subtituloRu: subtituloTranslations.ru || portadaData.subtitulo,
         direccion: portadaData.direccion, telefono: portadaData.telefono, email: portadaData.email,
         instagram: portadaData.instagram, tiktok: portadaData.tiktok, whatsapp: portadaData.whatsapp
       })
-      toast.success('Guardado', { id: 'saving' })
+      toast.success('Portada guardada y traducida a 4 idiomas', { id: 'saving' })
       setPortadaFile(null); setPortadaPreview('')
     } catch (error) { toast.error('Error', { id: 'saving' }) }
     finally { setIsSavingPortada(false) }
@@ -215,7 +239,6 @@ export default function ConfiguracionPage() {
         imagenUrl = await uploadImage(cartaImagenFile, `carta/${Date.now()}_${cartaImagenFile.name}`)
       }
       
-      // Traducir el título de la carta a 4 idiomas
       const titleTranslations = await translateToAllLanguages(cartaTitulo)
       
       await updateDoc(doc(db, 'configuracion', 'vUJ7J8q0KfoLrph2QAgt'), {
@@ -279,12 +302,19 @@ export default function ConfiguracionPage() {
 
       {/* Sección Portada Principal */}
       <Card className="border border-gray-800 bg-gray-950/50">
-        <CardHeader><CardTitle>🏠 Portada Principal</CardTitle><CardDescription>Imagen de fondo de la página de inicio</CardDescription></CardHeader>
+        <CardHeader><CardTitle>🏠 Portada Principal</CardTitle><CardDescription>Imagen y textos de la página de inicio</CardDescription></CardHeader>
         <CardContent className="space-y-4">
           <div><Label>Imagen actual</Label><div className="h-32 w-full bg-gray-900 rounded-lg overflow-hidden mt-2">{portadaData.portada && <img src={portadaData.portada} className="w-full h-full object-cover" />}</div></div>
           <div><Label>Cambiar imagen</Label><div className="flex items-center gap-4">{portadaPreview ? <div className="relative"><img src={portadaPreview} className="h-24 w-40 object-cover rounded border-2 border-blue-500" /><button onClick={() => { setPortadaFile(null); setPortadaPreview(''); }} className="absolute -right-2 -top-2 bg-red-500 rounded-full p-1"><X className="h-3 w-3" /></button></div> : <label className="flex h-24 w-40 cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-gray-700"><Upload className="h-6 w-6" /><input type="file" accept="image/*" className="hidden" onChange={handlePortadaImageChange} /></label>}</div></div>
-          <div className="grid grid-cols-2 gap-4"><div><Label>Título</Label><Input value={portadaData.titulo} onChange={(e) => setPortadaData({...portadaData, titulo: e.target.value})} /></div><div><Label>Subtítulo</Label><Input value={portadaData.subtitulo} onChange={(e) => setPortadaData({...portadaData, subtitulo: e.target.value})} /></div></div>
-          <Button onClick={handleSavePortada} disabled={isSavingPortada}>Guardar portada</Button>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div><Label>Título principal (español) *</Label><Input value={portadaData.titulo} onChange={(e) => setPortadaData({...portadaData, titulo: e.target.value})} placeholder="Ej: Gaby's Club" /></div>
+            <div><Label>Subtítulo (español) *</Label><Input value={portadaData.subtitulo} onChange={(e) => setPortadaData({...portadaData, subtitulo: e.target.value})} placeholder="Ej: Los mejores cócteles" /></div>
+          </div>
+          <p className="text-xs text-gray-500">El título y subtítulo se traducirán automáticamente a Inglés, Francés, Alemán y Ruso al guardar</p>
+          <Button onClick={handleSavePortada} disabled={isSavingPortada} className="bg-gradient-to-r from-green-600 to-green-500">
+            {isSavingPortada && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            Guardar y traducir portada
+          </Button>
         </CardContent>
       </Card>
 
@@ -292,7 +322,7 @@ export default function ConfiguracionPage() {
       <Card className="border border-gray-800 bg-gray-950/50">
         <CardHeader><CardTitle>📋 Configuración de la Carta</CardTitle></CardHeader>
         <CardContent className="space-y-4">
-          <div><Label>Título del banner</Label><Input value={cartaTitulo} onChange={(e) => setCartaTitulo(e.target.value)} placeholder="Ej: La Carta" /></div>
+          <div><Label>Título del banner (español)</Label><Input value={cartaTitulo} onChange={(e) => setCartaTitulo(e.target.value)} placeholder="Ej: La Carta" /></div>
           <div><Label>Imagen del banner (hero)</Label><div className="flex items-center gap-4">{cartaImagenPreview ? <div className="relative"><img src={cartaImagenPreview} className="h-24 w-40 object-cover rounded border-2 border-green-500" /><button onClick={() => { setCartaImagenFile(null); setCartaImagenPreview(''); }} className="absolute -right-2 -top-2 bg-red-500 rounded-full p-1"><X className="h-3 w-3" /></button></div> : <label className="flex h-24 w-40 cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-gray-700"><Upload className="h-6 w-6" /><input type="file" accept="image/*" className="hidden" onChange={handleCartaImageChange} /></label>}</div></div>
           
           <div className="border-t border-gray-800 pt-4 mt-2"><h3 className="font-semibold text-white mb-3">📢 Línea informativa</h3>

@@ -12,7 +12,7 @@ import { doc, getDoc } from 'firebase/firestore'
 import { LineaInformativa } from '@/components/LineaInformativa'
 
 export default function HomePage() {
-  const { t } = useI18n()
+  const { language, t } = useI18n()
   const { getSuggestions, isLoading } = useStore()
   const [portadaUrl, setPortadaUrl] = useState<string>('')
   const [titulo, setTitulo] = useState('')
@@ -29,8 +29,24 @@ export default function HomePage() {
         if (docSnap.exists()) {
           const data = docSnap.data()
           setPortadaUrl(data.portada || '')
-          setTitulo(data.titulo || "Gaby's Club")
-          setSubtitulo(data.subtitulo || 'Cócteles y picaderas')
+          
+          // Mostrar título y subtítulo según el idioma seleccionado
+          if (language === 'en') {
+            setTitulo(data.tituloEn || data.titulo || "Gaby's Club")
+            setSubtitulo(data.subtituloEn || data.subtitulo || 'The best cocktails in the city')
+          } else if (language === 'fr') {
+            setTitulo(data.tituloFr || data.titulo || "Gaby's Club")
+            setSubtitulo(data.subtituloFr || data.subtitulo || 'Les meilleurs cocktails de la ville')
+          } else if (language === 'de') {
+            setTitulo(data.tituloDe || data.titulo || "Gaby's Club")
+            setSubtitulo(data.subtituloDe || data.subtitulo || 'Die besten Cocktails der Stadt')
+          } else if (language === 'ru') {
+            setTitulo(data.tituloRu || data.titulo || "Gaby's Club")
+            setSubtitulo(data.subtituloRu || data.subtitulo || 'Лучшие коктейли в городе')
+          } else {
+            setTitulo(data.titulo || "Gaby's Club")
+            setSubtitulo(data.subtitulo || 'Los mejores cócteles de la ciudad')
+          }
           
           if (data.whatsapp) {
             const cleanNumber = data.whatsapp.replace(/[^0-9]/g, '')
@@ -57,7 +73,7 @@ export default function HomePage() {
       }
     }
     loadPortada()
-  }, [])
+  }, [language])
 
   const suggestions = getSuggestions().slice(0, 6)
   const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent("Hola, me gustaría hacer una reserva")}`
@@ -68,10 +84,8 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-black">
-      {/* Línea Informativa */}
       {lineaConfig && <LineaInformativa config={lineaConfig} />}
 
-      {/* Hero Section */}
       <section className="relative h-[85vh] min-h-[600px] overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${portadaUrl || '/default-bg.jpg'})` }} />
@@ -100,7 +114,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Features Section */}
       <section className="py-16 bg-gradient-to-b from-black to-gray-950">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -136,7 +149,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Suggestions Section */}
       <section className="py-20 md:py-28">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
@@ -172,7 +184,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA Section */}
       <section className="py-20 md:py-28 relative overflow-hidden bg-gradient-to-r from-blue-600 to-red-600">
         <div className="relative z-10 container mx-auto px-4 text-center text-white">
           <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold mb-4">{t('home.cta.title')}</h2>
