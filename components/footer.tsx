@@ -208,10 +208,10 @@ export function Footer() {
           <div className="space-y-4">
             <h4 className="font-semibold" style={{ color: textColor }}>Enlaces</h4>
             <ul className="space-y-2 text-sm">
-              <li><HiddenLink href="/carta" className="flex items-center gap-2 transition-colors hover:opacity-80" style={{ color: textColor }}><Globe className="h-3 w-3" /> Carta</HiddenLink></li>
-              <li><HiddenLink href="/reservas" className="flex items-center gap-2 transition-colors hover:opacity-80" style={{ color: textColor }}><Globe className="h-3 w-3" /> Reservas</HiddenLink></li>
-              <li><HiddenLink href="/sugerencias" className="flex items-center gap-2 transition-colors hover:opacity-80" style={{ color: textColor }}><Globe className="h-3 w-3" /> Sugerencias</HiddenLink></li>
-              <li><HiddenLink href="/ubicacion" className="flex items-center gap-2 transition-colors hover:opacity-80" style={{ color: textColor }}><Globe className="h-3 w-3" /> Ubicación</HiddenLink></li>
+              <li><HiddenLink href="/carta" className="flex items-center gap-2 transition-colors hover:opacity-80" style={{ color: textColor }}><Globe className="h-3 w-3" style={{ color: textColor }} /> <span style={{ color: textColor }}>Carta</span></HiddenLink></li>
+              <li><HiddenLink href="/reservas" className="flex items-center gap-2 transition-colors hover:opacity-80" style={{ color: textColor }}><Globe className="h-3 w-3" style={{ color: textColor }} /> <span style={{ color: textColor }}>Reservas</span></HiddenLink></li>
+              <li><HiddenLink href="/sugerencias" className="flex items-center gap-2 transition-colors hover:opacity-80" style={{ color: textColor }}><Globe className="h-3 w-3" style={{ color: textColor }} /> <span style={{ color: textColor }}>Sugerencias</span></HiddenLink></li>
+              <li><HiddenLink href="/ubicacion" className="flex items-center gap-2 transition-colors hover:opacity-80" style={{ color: textColor }}><Globe className="h-3 w-3" style={{ color: textColor }} /> <span style={{ color: textColor }}>Ubicación</span></HiddenLink></li>
             </ul>
           </div>
         </div>
