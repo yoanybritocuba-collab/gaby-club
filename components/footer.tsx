@@ -198,10 +198,26 @@ export function Footer() {
           <div className="space-y-4">
             <h4 className="font-semibold" style={{ color: textColor }}>{translateText('footer.links') || 'Enlaces'}</h4>
             <ul className="space-y-2 text-sm">
-              <li><HiddenLink href="/carta" className="flex items-center gap-2 transition-colors hover:opacity-80" style={{ color: textColor }}><Globe className="h-3 w-3" style={{ color: textColor }} /> {translateText('nav.menu')}</HiddenLink></li>
-              <li><HiddenLink href="/reservas" className="flex items-center gap-2 transition-colors hover:opacity-80" style={{ color: textColor }}><Globe className="h-3 w-3" style={{ color: textColor }} /> {translateText('nav.reservations')}</HiddenLink></li>
-              <li><HiddenLink href="/sugerencias" className="flex items-center gap-2 transition-colors hover:opacity-80" style={{ color: textColor }}><Globe className="h-3 w-3" style={{ color: textColor }} /> {translateText('nav.suggestions')}</HiddenLink></li>
-              <li><HiddenLink href="/ubicacion" className="flex items-center gap-2 transition-colors hover:opacity-80" style={{ color: textColor }}><Globe className="h-3 w-3" style={{ color: textColor }} /> {translateText('nav.location')}</HiddenLink></li>
+              <li style={{ color: textColor }}>
+                <HiddenLink href="/carta" className="flex items-center gap-2 transition-colors hover:opacity-80">
+                  <Globe className="h-3 w-3" style={{ color: textColor }} /> {translateText('nav.menu')}
+                </HiddenLink>
+              </li>
+              <li style={{ color: textColor }}>
+                <HiddenLink href="/reservas" className="flex items-center gap-2 transition-colors hover:opacity-80">
+                  <Globe className="h-3 w-3" style={{ color: textColor }} /> {translateText('nav.reservations')}
+                </HiddenLink>
+              </li>
+              <li style={{ color: textColor }}>
+                <HiddenLink href="/sugerencias" className="flex items-center gap-2 transition-colors hover:opacity-80">
+                  <Globe className="h-3 w-3" style={{ color: textColor }} /> {translateText('nav.suggestions')}
+                </HiddenLink>
+              </li>
+              <li style={{ color: textColor }}>
+                <HiddenLink href="/ubicacion" className="flex items-center gap-2 transition-colors hover:opacity-80">
+                  <Globe className="h-3 w-3" style={{ color: textColor }} /> {translateText('nav.location')}
+                </HiddenLink>
+              </li>
             </ul>
           </div>
         </div>
