@@ -131,6 +131,7 @@ export default function MenuPage() {
   }
 
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
+  
   const updateQuantity = (productId: string, delta: number) => {
     setQuantities(prev => ({ ...prev, [productId]: Math.max(0, (prev[productId] || 0) + delta) }))
   }
@@ -184,7 +185,9 @@ export default function MenuPage() {
     const grouped: { categoryId: string; categoryName: string; products: Producto[] }[] = []
     categories.forEach(cat => {
       const catProducts = activeProducts.filter(p => p.categoriaGlobalId === cat.id).sort((a, b) => (a.orden || 0) - (b.orden || 0))
-      if (catProducts.length > 0) grouped.push({ categoryId: cat.id, categoryName: getLocalizedField(cat, 'name'), products: catProducts })
+      if (catProducts.length > 0) {
+        grouped.push({ categoryId: cat.id, categoryName: getLocalizedField(cat, 'name'), products: catProducts })
+      }
     })
     return grouped
   }
