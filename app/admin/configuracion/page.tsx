@@ -5,7 +5,9 @@ import { useRouter } from 'next/navigation'
 import { 
   Settings, Shield, User, Bell, Globe, Palette, ChevronRight, Loader2, Key, Moon, Sun,
   Upload, X, Eye, Image as ImageIcon, LayoutTemplate, Type, AlignLeft, Maximize2,
-  Instagram, Facebook, MapPin, Phone, MessageCircle, Mail, Clock, Save
+  Instagram, Facebook, MapPin, Phone, MessageCircle, Mail, Clock, Save,
+  Monitor, MoveHorizontal, Speed, Repeat, AlignCenter, AlignLeft as AlignLeftIcon, AlignRight,
+  Bold, Italic, Underline
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -47,9 +49,14 @@ export default function ConfiguracionPage() {
   // Línea informativa
   const [lineaActiva, setLineaActiva] = useState(false)
   const [lineaTexto, setLineaTexto] = useState('')
-  const [lineaColor, setLineaColor] = useState('#ffffff')
-  const [lineaAncho, setLineaAncho] = useState('100')
-  const [lineaPosicion, setLineaPosicion] = useState('center')
+  const [lineaColorTexto, setLineaColorTexto] = useState('#ffffff')
+  const [lineaColorFondo, setLineaColorFondo] = useState('#000000')
+  const [lineaTamanioLetra, setLineaTamanioLetra] = useState(16)
+  const [lineaTipoLetra, setLineaTipoLetra] = useState('Arial')
+  const [lineaVelocidad, setLineaVelocidad] = useState(10)
+  const [lineaTiempoEntre, setLineaTiempoEntre] = useState(2)
+  const [lineaAncho, setLineaAncho] = useState(100)
+  const [lineaPosicion, setLineaPosicion] = useState<'left' | 'center' | 'right'>('center')
 
   // Logo y nombre web
   const [logoUrl, setLogoUrl] = useState('')
@@ -80,11 +87,19 @@ export default function ConfiguracionPage() {
           })
           setCartaTitulo(data.cartaTitulo || 'La Carta')
           setCartaImagen(data.cartaImagen || '')
+          
+          // Línea informativa
           setLineaActiva(data.lineaActiva || false)
           setLineaTexto(data.lineaTexto || '')
-          setLineaColor(data.lineaColor || '#ffffff')
-          setLineaAncho(data.lineaAncho || '100')
+          setLineaColorTexto(data.lineaColorTexto || '#ffffff')
+          setLineaColorFondo(data.lineaColorFondo || '#000000')
+          setLineaTamanioLetra(data.lineaTamanioLetra || 16)
+          setLineaTipoLetra(data.lineaTipoLetra || 'Arial')
+          setLineaVelocidad(data.lineaVelocidad || 10)
+          setLineaTiempoEntre(data.lineaTiempoEntre || 2)
+          setLineaAncho(data.lineaAncho || 100)
           setLineaPosicion(data.lineaPosicion || 'center')
+          
           setLogoUrl(data.logoUrl || '/logo.png')
           setNombreWeb(data.nombreWeb || "Gaby's Club")
           setLogoTamaño(data.logoTamaño || 'medio')
@@ -204,7 +219,9 @@ export default function ConfiguracionPage() {
       }
       await updateDoc(doc(db, 'configuracion', 'vUJ7J8q0KfoLrph2QAgt'), {
         cartaTitulo, cartaImagen: imagenUrl,
-        lineaActiva, lineaTexto, lineaColor, lineaAncho, lineaPosicion
+        lineaActiva, lineaTexto, lineaColorTexto, lineaColorFondo,
+        lineaTamanioLetra, lineaTipoLetra, lineaVelocidad, lineaTiempoEntre,
+        lineaAncho, lineaPosicion
       })
       toast.success('Carta guardada', { id: 'saving-carta' })
       setCartaImagenFile(null); setCartaImagenPreview('')
@@ -229,6 +246,12 @@ export default function ConfiguracionPage() {
     } catch (error) { toast.error('Error', { id: 'saving-logo' }) }
     finally { setIsSavingLogo(false) }
   }
+
+  // Fuentes disponibles
+  const fuentes = [
+    'Arial', 'Helvetica', 'Times New Roman', 'Georgia', 'Verdana', 'Courier New', 
+    'Impact', 'Comic Sans MS', 'Trebuchet MS', 'Montserrat', 'Open Sans', 'Roboto'
+  ]
 
   return (
     <div className="space-y-6">
@@ -271,12 +294,246 @@ export default function ConfiguracionPage() {
         <CardContent className="space-y-4">
           <div><Label>Título del banner</Label><Input value={cartaTitulo} onChange={(e) => setCartaTitulo(e.target.value)} placeholder="Ej: La Carta" /></div>
           <div><Label>Imagen del banner (hero)</Label><div className="flex items-center gap-4">{cartaImagenPreview ? <div className="relative"><img src={cartaImagenPreview} className="h-24 w-40 object-cover rounded border-2 border-green-500" /><button onClick={() => { setCartaImagenFile(null); setCartaImagenPreview(''); }} className="absolute -right-2 -top-2 bg-red-500 rounded-full p-1"><X className="h-3 w-3" /></button></div> : <label className="flex h-24 w-40 cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-gray-700"><Upload className="h-6 w-6" /><input type="file" accept="image/*" className="hidden" onChange={handleCartaImageChange} /></label>}</div></div>
-          
-          <div className="border-t border-gray-800 pt-4 mt-2"><h3 className="font-semibold text-white mb-3">📢 Línea informativa</h3>
-            <div className="flex items-center justify-between mb-3"><Label>Activar línea</Label><Switch checked={lineaActiva} onCheckedChange={setLineaActiva} /></div>
-            {lineaActiva && (<div className="space-y-3"><Input value={lineaTexto} onChange={(e) => setLineaTexto(e.target.value)} placeholder="Ej: Envío gratis desde 20€" /><div><Label>Color del texto</Label><div className="flex items-center gap-2"><input type="color" value={lineaColor} onChange={(e) => setLineaColor(e.target.value)} className="h-10 w-10 rounded border" /><span>{lineaColor}</span></div></div><div><Label>Ancho (%)</Label><div className="flex items-center gap-4"><input type="range" min="30" max="100" value={lineaAncho} onChange={(e) => setLineaAncho(e.target.value)} className="flex-1" /><span>{lineaAncho}%</span><Maximize2 className="h-4 w-4 text-gray-400" /></div></div><div><Label>Posición</Label><select value={lineaPosicion} onChange={(e) => setLineaPosicion(e.target.value)} className="w-full bg-gray-900 border-gray-700 rounded-md p-2"><option value="left">Izquierda</option><option value="center">Centro</option><option value="right">Derecha</option></select></div></div>)}
-          </div>
           <Button onClick={handleSaveCarta} disabled={isSavingCarta}>Guardar configuración de la carta</Button>
+        </CardContent>
+      </Card>
+
+      {/* Sección Línea Informativa */}
+      <Card className="border border-gray-800 bg-gray-950/50">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-white">
+            <MoveHorizontal className="h-4 w-4 text-yellow-400" />
+            Línea Informativa (Ticker)
+          </CardTitle>
+          <CardDescription className="text-gray-400">
+            Configura la línea de texto que se desplaza de izquierda a derecha en la portada y en la carta
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {/* Activar/Desactivar */}
+          <div className="flex items-center justify-between p-4 bg-gray-900/50 rounded-lg">
+            <div>
+              <Label className="text-white font-medium">Activar línea informativa</Label>
+              <p className="text-sm text-gray-400">Muestra el ticker en la portada y en la carta</p>
+            </div>
+            <Switch checked={lineaActiva} onCheckedChange={setLineaActiva} />
+          </div>
+
+          {lineaActiva && (
+            <>
+              {/* Texto */}
+              <div>
+                <Label className="text-white">Texto</Label>
+                <Input 
+                  value={lineaTexto} 
+                  onChange={(e) => setLineaTexto(e.target.value)} 
+                  placeholder="Ej: Envío gratis desde 20€ | Reserva tu mesa | Los mejores cócteles"
+                  className="mt-1 bg-gray-900 border-gray-700 text-white"
+                />
+              </div>
+
+              {/* Color del texto y fondo */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-white">Color del texto</Label>
+                  <div className="flex items-center gap-2 mt-1">
+                    <input 
+                      type="color" 
+                      value={lineaColorTexto} 
+                      onChange={(e) => setLineaColorTexto(e.target.value)} 
+                      className="h-10 w-10 rounded border border-gray-700 cursor-pointer"
+                    />
+                    <span className="text-gray-400 text-sm">{lineaColorTexto}</span>
+                  </div>
+                </div>
+                <div>
+                  <Label className="text-white">Color de fondo</Label>
+                  <div className="flex items-center gap-2 mt-1">
+                    <input 
+                      type="color" 
+                      value={lineaColorFondo} 
+                      onChange={(e) => setLineaColorFondo(e.target.value)} 
+                      className="h-10 w-10 rounded border border-gray-700 cursor-pointer"
+                    />
+                    <span className="text-gray-400 text-sm">{lineaColorFondo}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Tamaño y tipo de letra */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-white flex items-center gap-2">
+                    <Type className="h-4 w-4" /> Tamaño de letra (px)
+                  </Label>
+                  <div className="flex items-center gap-4 mt-1">
+                    <input 
+                      type="range" 
+                      min="10" 
+                      max="48" 
+                      value={lineaTamanioLetra} 
+                      onChange={(e) => setLineaTamanioLetra(parseInt(e.target.value))}
+                      className="flex-1"
+                    />
+                    <span className="text-gray-400 w-12">{lineaTamanioLetra}px</span>
+                  </div>
+                </div>
+                <div>
+                  <Label className="text-white flex items-center gap-2">
+                    <AlignLeftIcon className="h-4 w-4" /> Tipo de letra
+                  </Label>
+                  <select 
+                    value={lineaTipoLetra} 
+                    onChange={(e) => setLineaTipoLetra(e.target.value)}
+                    className="w-full mt-1 bg-gray-900 border-gray-700 rounded-md p-2 text-white"
+                  >
+                    {fuentes.map(fuente => (
+                      <option key={fuente} value={fuente} style={{ fontFamily: fuente }}>{fuente}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Velocidad y tiempo entre repeticiones */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-white flex items-center gap-2">
+                    <Speed className="h-4 w-4" /> Velocidad (segundos)
+                  </Label>
+                  <div className="flex items-center gap-4 mt-1">
+                    <input 
+                      type="range" 
+                      min="3" 
+                      max="30" 
+                      step="1"
+                      value={lineaVelocidad} 
+                      onChange={(e) => setLineaVelocidad(parseInt(e.target.value))}
+                      className="flex-1"
+                    />
+                    <span className="text-gray-400 w-12">{lineaVelocidad}s</span>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">Tiempo que tarda en cruzar la pantalla</p>
+                </div>
+                <div>
+                  <Label className="text-white flex items-center gap-2">
+                    <Repeat className="h-4 w-4" /> Tiempo entre repeticiones (s)
+                  </Label>
+                  <div className="flex items-center gap-4 mt-1">
+                    <input 
+                      type="range" 
+                      min="0" 
+                      max="10" 
+                      step="0.5"
+                      value={lineaTiempoEntre} 
+                      onChange={(e) => setLineaTiempoEntre(parseFloat(e.target.value))}
+                      className="flex-1"
+                    />
+                    <span className="text-gray-400 w-12">{lineaTiempoEntre}s</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Ancho y posición */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-white flex items-center gap-2">
+                    <Maximize2 className="h-4 w-4" /> Ancho de la línea (%)
+                  </Label>
+                  <div className="flex items-center gap-4 mt-1">
+                    <input 
+                      type="range" 
+                      min="30" 
+                      max="100" 
+                      value={lineaAncho} 
+                      onChange={(e) => setLineaAncho(parseInt(e.target.value))}
+                      className="flex-1"
+                    />
+                    <span className="text-gray-400 w-12">{lineaAncho}%</span>
+                  </div>
+                </div>
+                <div>
+                  <Label className="text-white flex items-center gap-2">
+                    <AlignCenter className="h-4 w-4" /> Posición
+                  </Label>
+                  <div className="flex gap-2 mt-1">
+                    <Button 
+                      type="button"
+                      variant={lineaPosicion === 'left' ? 'default' : 'outline'}
+                      className="flex-1"
+                      onClick={() => setLineaPosicion('left')}
+                    >
+                      <AlignLeftIcon className="h-4 w-4 mr-2" /> Izquierda
+                    </Button>
+                    <Button 
+                      type="button"
+                      variant={lineaPosicion === 'center' ? 'default' : 'outline'}
+                      className="flex-1"
+                      onClick={() => setLineaPosicion('center')}
+                    >
+                      <AlignCenter className="h-4 w-4 mr-2" /> Centro
+                    </Button>
+                    <Button 
+                      type="button"
+                      variant={lineaPosicion === 'right' ? 'default' : 'outline'}
+                      className="flex-1"
+                      onClick={() => setLineaPosicion('right')}
+                    >
+                      <AlignRight className="h-4 w-4 mr-2" /> Derecha
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Vista previa en tiempo real */}
+              <div className="mt-6 pt-4 border-t border-gray-800">
+                <div className="flex items-center gap-2 mb-3">
+                  <Monitor className="h-4 w-4 text-green-400" />
+                  <Label className="text-white">Vista previa en tiempo real</Label>
+                </div>
+                <div 
+                  className="w-full overflow-hidden rounded-lg"
+                  style={{ 
+                    backgroundColor: lineaColorFondo,
+                    width: `${lineaAncho}%`,
+                    marginLeft: lineaPosicion === 'center' ? 'auto' : lineaPosicion === 'right' ? 'auto' : '0',
+                    marginRight: lineaPosicion === 'center' ? 'auto' : lineaPosicion === 'left' ? 'auto' : '0'
+                  }}
+                >
+                  <div 
+                    className="whitespace-nowrap animate-marquee"
+                    style={{
+                      animationDuration: `${lineaVelocidad}s`,
+                      fontFamily: lineaTipoLetra,
+                      fontSize: `${lineaTamanioLetra}px`,
+                      color: lineaColorTexto,
+                      padding: '8px 0',
+                      display: 'inline-block',
+                      animationIterationCount: 'infinite',
+                      animationTimingFunction: 'linear'
+                    }}
+                  >
+                    {lineaTexto || "Escribe un texto para ver la vista previa..."}
+                  </div>
+                </div>
+                <style jsx>{`
+                  @keyframes marquee {
+                    0% { transform: translateX(100%); }
+                    100% { transform: translateX(-100%); }
+                  }
+                  .animate-marquee {
+                    animation-name: marquee;
+                    animation-iteration-count: infinite;
+                    animation-timing-function: linear;
+                  }
+                `}</style>
+              </div>
+            </>
+          )}
+
+          <Button onClick={handleSaveCarta} disabled={isSavingCarta} className="w-full">
+            <Save className="h-4 w-4 mr-2" />
+            Guardar línea informativa
+          </Button>
         </CardContent>
       </Card>
 
