@@ -17,22 +17,60 @@ export interface CategoriaGlobal {
   id: string;
   nombre: string;
   nameEn?: string;
+  nameFr?: string;
+  nameDe?: string;
+  nameRu?: string;
   activo: boolean;
   order?: number;
+  traducciones?: {
+    en?: string;
+    es?: string;
+    fr?: string;
+    de?: string;
+    ru?: string;
+  };
 }
 
 export interface Producto {
   id: string;
   nombre: string;
   nameEn?: string;
+  nameFr?: string;
+  nameDe?: string;
+  nameRu?: string;
   descripcion?: string;
   descriptionEn?: string;
+  descriptionFr?: string;
+  descriptionDe?: string;
+  descriptionRu?: string;
   precio: number;
   categoriaGlobalId: string;
   activo: boolean;
   destacado?: boolean;
   imagenUrl?: string | null;
   orden?: number;
+  traducciones?: {
+    en?: {
+      nombre?: string;
+      descripcion?: string;
+    };
+    es?: {
+      nombre?: string;
+      descripcion?: string;
+    };
+    fr?: {
+      nombre?: string;
+      descripcion?: string;
+    };
+    de?: {
+      nombre?: string;
+      descripcion?: string;
+    };
+    ru?: {
+      nombre?: string;
+      descripcion?: string;
+    };
+  };
 }
 
 // ============ CATEGORÍAS ============
