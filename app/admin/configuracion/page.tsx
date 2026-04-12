@@ -74,7 +74,7 @@ export default function ConfiguracionPage() {
         if (docSnap.exists()) {
           const data = docSnap.data()
           setPortadaData({
-            portada: data.portada || '', titulo: data.titulo || 'Gaby\'s Club', subtitulo: data.subtitulo || 'Cócteles y picaderas',
+            portada: data.portada || '', titulo: data.titulo || "Gaby's Club", subtitulo: data.subtitulo || 'Cócteles y picaderas',
             direccion: data.direccion || '', telefono: data.telefono || '', email: data.email || '',
             instagram: data.instagram || '', tiktok: data.tiktok || '', whatsapp: data.whatsapp || ''
           })
@@ -274,7 +274,7 @@ export default function ConfiguracionPage() {
           
           <div className="border-t border-gray-800 pt-4 mt-2"><h3 className="font-semibold text-white mb-3">📢 Línea informativa</h3>
             <div className="flex items-center justify-between mb-3"><Label>Activar línea</Label><Switch checked={lineaActiva} onCheckedChange={setLineaActiva} /></div>
-            {lineaActiva && (<div className="space-y-3"><Input value={lineaTexto} onChange={(e) => setLineaTexto(e.target.value)} placeholder="Ej: Envío gratis desde 20€" /><div><Label>Color del texto</Label><div className="flex items-center gap-2"><input type="color" value={lineaColor} onChange={(e) => setLineaColor(e.target.value)} className="h-10 w-10 rounded border" /><span>{lineaColor}</span></div></div><div><Label>Ancho (%)</Label><div className="flex items-center gap-4"><input type="range" min="30" max="100" value={lineaAncho} onChange={(e) => setLineaAncho(e.target.value)} className="flex-1" /><span>{lineaAncho}%</span><Maximize2 className="h-4 w-4 text-gray-400" title="Ancho visible" /></div></div><div><Label>Posición</Label><select value={lineaPosicion} onChange={(e) => setLineaPosicion(e.target.value)} className="w-full bg-gray-900 border-gray-700 rounded-md p-2"><option value="left">Izquierda</option><option value="center">Centro</option><option value="right">Derecha</option></select></div></div>)}
+            {lineaActiva && (<div className="space-y-3"><Input value={lineaTexto} onChange={(e) => setLineaTexto(e.target.value)} placeholder="Ej: Envío gratis desde 20€" /><div><Label>Color del texto</Label><div className="flex items-center gap-2"><input type="color" value={lineaColor} onChange={(e) => setLineaColor(e.target.value)} className="h-10 w-10 rounded border" /><span>{lineaColor}</span></div></div><div><Label>Ancho (%)</Label><div className="flex items-center gap-4"><input type="range" min="30" max="100" value={lineaAncho} onChange={(e) => setLineaAncho(e.target.value)} className="flex-1" /><span>{lineaAncho}%</span><Maximize2 className="h-4 w-4 text-gray-400" /></div></div><div><Label>Posición</Label><select value={lineaPosicion} onChange={(e) => setLineaPosicion(e.target.value)} className="w-full bg-gray-900 border-gray-700 rounded-md p-2"><option value="left">Izquierda</option><option value="center">Centro</option><option value="right">Derecha</option></select></div></div>)}
           </div>
           <Button onClick={handleSaveCarta} disabled={isSavingCarta}>Guardar configuración de la carta</Button>
         </CardContent>
