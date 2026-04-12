@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ArrowRight, Star, Sparkles, Heart, Shield, Truck, Coffee, Utensils, Wine, Loader2 } from 'lucide-react'
+import { ArrowRight, Star, Sparkles, Heart, Shield, Truck, Coffee, Utensils, Wine, Loader2, Clock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { SuggestionCard } from '@/components/suggestion-card'
 import { useI18n } from '@/lib/i18n'
