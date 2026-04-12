@@ -43,7 +43,7 @@ export function Footer() {
           const data = docSnap.data()
           setConfig({
             restaurante: {
-              nombre: data.nombre || 'Gaby\'s Club',
+              nombre: data.nombre || "Gaby's Club",
               direccion: data.direccion || '',
               telefono: data.telefono || '',
               whatsapp: data.whatsapp || '',
@@ -68,7 +68,7 @@ export function Footer() {
         } else {
           setConfig({
             restaurante: {
-              nombre: 'Gaby\'s Club',
+              nombre: "Gaby's Club",
               direccion: 'Carrer del Tropazi, 24, Gràcia, 08012 Barcelona',
               telefono: '+34634492023',
               whatsapp: '+34634492023',
@@ -110,7 +110,7 @@ export function Footer() {
 
   if (isLoading) {
     return (
-      <footer className="border-t py-8" style={{ backgroundColor: bgColor }}>
+      <footer style={{ backgroundColor: bgColor }} className="py-8">
         <div className="container mx-auto px-4 text-center">
           <Loader2 className="h-6 w-6 animate-spin mx-auto" style={{ color: textColor }} />
         </div>
@@ -128,7 +128,7 @@ export function Footer() {
   }
 
   return (
-    <footer style={{ backgroundColor: bgColor, color: textColor }}>
+    <footer style={{ backgroundColor: bgColor }}>
       <div className="container mx-auto px-4 py-12">
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           
@@ -141,19 +141,19 @@ export function Footer() {
             <div className="space-y-3 text-sm">
               <div className="flex items-start gap-2">
                 <MapPin className="h-4 w-4 mt-0.5" style={{ color: textColor }} />
-                <span>{restaurante.direccion}</span>
+                <span style={{ color: textColor }}>{restaurante.direccion}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Phone className="h-4 w-4" style={{ color: textColor }} />
-                <span>{restaurante.telefono}</span>
+                <span style={{ color: textColor }}>{restaurante.telefono}</span>
               </div>
               <div className="flex items-center gap-2">
                 <MessageCircle className="h-4 w-4" style={{ color: textColor }} />
-                <span>{restaurante.whatsapp}</span>
+                <span style={{ color: textColor }}>{restaurante.whatsapp}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="h-4 w-4" style={{ color: textColor }} />
-                <span>{restaurante.email}</span>
+                <span style={{ color: textColor }}>{restaurante.email}</span>
               </div>
             </div>
             
@@ -163,18 +163,16 @@ export function Footer() {
                 <HiddenExternalLink 
                   href={`https://instagram.com/${redesSociales.instagram.replace('@', '')}`}
                   className="transition-all hover:scale-110 hover:text-pink-500"
-                  style={{ color: textColor }}
                 >
-                  <Instagram className="h-5 w-5" />
+                  <Instagram className="h-5 w-5" style={{ color: textColor }} />
                 </HiddenExternalLink>
               )}
               {redesSociales.facebook && (
                 <HiddenExternalLink 
                   href={`https://facebook.com/${redesSociales.facebook}`}
                   className="transition-all hover:scale-110 hover:text-blue-600"
-                  style={{ color: textColor }}
                 >
-                  <Facebook className="h-5 w-5" />
+                  <Facebook className="h-5 w-5" style={{ color: textColor }} />
                 </HiddenExternalLink>
               )}
             </div>
@@ -196,8 +194,8 @@ export function Footer() {
               <ul className="space-y-2 text-sm">
                 {Object.entries(horarioNormal).map(([dia, horas]: [string, any]) => (
                   <li key={dia} className="flex justify-between">
-                    <span>{dayNames[dia] || dia}</span>
-                    <span className="font-medium">
+                    <span style={{ color: textColor }}>{dayNames[dia] || dia}</span>
+                    <span className="font-medium" style={{ color: textColor }}>
                       {formatHorario(horas.apertura, horas.cierre)}
                     </span>
                   </li>
@@ -208,7 +206,7 @@ export function Footer() {
 
           {/* Columna 3: Enlaces rápidos */}
           <div className="space-y-4">
-            <h4 className="font-semibold">Enlaces</h4>
+            <h4 className="font-semibold" style={{ color: textColor }}>Enlaces</h4>
             <ul className="space-y-2 text-sm">
               <li><HiddenLink href="/carta" className="flex items-center gap-2 transition-colors hover:opacity-80" style={{ color: textColor }}><Globe className="h-3 w-3" /> Carta</HiddenLink></li>
               <li><HiddenLink href="/reservas" className="flex items-center gap-2 transition-colors hover:opacity-80" style={{ color: textColor }}><Globe className="h-3 w-3" /> Reservas</HiddenLink></li>
