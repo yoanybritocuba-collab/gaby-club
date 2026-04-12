@@ -19,12 +19,13 @@ import {
 import { db } from '@/lib/firebase'
 import { doc, getDoc } from 'firebase/firestore'
 
-function HiddenLink({ href, children, className }: { href: string; children: React.ReactNode; className?: string }) {
-  return <Link href={href} className={className}>{children}</Link>
+// Componente Link que acepta style
+function HiddenLink({ href, children, className, style }: { href: string; children: React.ReactNode; className?: string; style?: React.CSSProperties }) {
+  return <Link href={href} className={className} style={style}>{children}</Link>
 }
 
-function HiddenExternalLink({ href, children, className }: { href: string; children: React.ReactNode; className?: string }) {
-  return <a href={href} target="_blank" rel="noopener noreferrer" className={className}>{children}</a>
+function HiddenExternalLink({ href, children, className, style }: { href: string; children: React.ReactNode; className?: string; style?: React.CSSProperties }) {
+  return <a href={href} target="_blank" rel="noopener noreferrer" className={className} style={style}>{children}</a>
 }
 
 export function Footer() {
@@ -163,6 +164,7 @@ export function Footer() {
                 <HiddenExternalLink 
                   href={`https://instagram.com/${redesSociales.instagram.replace('@', '')}`}
                   className="transition-all hover:scale-110 hover:text-pink-500"
+                  style={{ color: textColor }}
                 >
                   <Instagram className="h-5 w-5" style={{ color: textColor }} />
                 </HiddenExternalLink>
@@ -171,6 +173,7 @@ export function Footer() {
                 <HiddenExternalLink 
                   href={`https://facebook.com/${redesSociales.facebook}`}
                   className="transition-all hover:scale-110 hover:text-blue-600"
+                  style={{ color: textColor }}
                 >
                   <Facebook className="h-5 w-5" style={{ color: textColor }} />
                 </HiddenExternalLink>
