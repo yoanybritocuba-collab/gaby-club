@@ -14,7 +14,7 @@ export function LanguageToggle() {
 
   useEffect(() => {
     const saved = localStorage.getItem('gaby-club-language')
-    if (saved) {
+    if (saved && ['es', 'en', 'fr', 'de', 'ru'].includes(saved)) {
       setCurrentLang(saved)
     }
   }, [])
@@ -30,11 +30,12 @@ export function LanguageToggle() {
   const currentLanguage = languages.find(l => l.code === currentLang) || languages[0]
 
   const handleLanguageChange = (code: string) => {
-    console.log('Cambiando a:', code)
     localStorage.setItem('gaby-club-language', code)
     setCurrentLang(code)
-    // Recargar la página para aplicar cambios
-    window.location.href = window.location.href
+    // Recargar para aplicar todos los cambios
+    setTimeout(() => {
+      window.location.reload()
+    }, 100)
   }
 
   return (
