@@ -20,7 +20,6 @@ import { translateText } from '@/lib/translate'
 import { toast } from 'sonner'
 
 const LANGUAGES = [
-  { code: 'es', name: 'Español' },
   { code: 'en', name: 'English' },
   { code: 'fr', name: 'Français' },
   { code: 'de', name: 'Deutsch' },
@@ -35,7 +34,6 @@ export default function NewProductPage() {
   const [showPreview, setShowPreview] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
-  const [isTranslating, setIsTranslating] = useState(false)
   const [formData, setFormData] = useState({
     nombre: '',
     descripcion: '',
@@ -75,23 +73,19 @@ export default function NewProductPage() {
   }
 
   const translateToAllLanguages = async (text: string) => {
-    const translations: Record<string, string> = {}
+    const translations: Record<string, string> = { es: text }
     for (const lang of LANGUAGES) {
-      if (lang.code === 'es') {
+      try {
+        translations[lang.code] = await translateText(text, lang.code)
+      } catch (error) {
+        console.error(`Error traduciendo a ${lang.code}:`, error)
         translations[lang.code] = text
-      } else {
-        try {
-          translations[lang.code] = await translateText(text, lang.code)
-        } catch (error) {
-          console.error(`Error traduciendo a ${lang.code}:`, error)
-          translations[lang.code] = text
-        }
       }
     }
     return translations
   }
 
-  const handleSubmit = async (e: React.FormEvent, shouldTranslate: boolean = true) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
     if (!formData.nombre || !formData.precio || !formData.categoriaGlobalId) {
@@ -99,24 +93,14 @@ export default function NewProductPage() {
       return
     }
 
-    if (shouldTranslate) {
-      setIsTranslating(true)
-      toast.loading('Traduciendo nombre y descripción a 5 idiomas...', { id: 'saving' })
-    } else {
-      setIsSaving(true)
-      toast.loading('Guardando...', { id: 'saving' })
-    }
+    setIsSaving(true)
+    toast.loading('Traduciendo nombre y descripción a 4 idiomas...', { id: 'saving' })
 
     try {
-      let nameTranslations: Record<string, string> = {}
-      let descTranslations: Record<string, string> = {}
-      
-      if (shouldTranslate) {
-        [nameTranslations, descTranslations] = await Promise.all([
-          translateToAllLanguages(formData.nombre),
-          formData.descripcion ? translateToAllLanguages(formData.descripcion) : Promise.resolve({ es: '', en: '', fr: '', de: '', ru: '' })
-        ])
-      }
+      const [nameTranslations, descTranslations] = await Promise.all([
+        translateToAllLanguages(formData.nombre),
+        formData.descripcion ? translateToAllLanguages(formData.descripcion) : Promise.resolve({ es: '', en: '', fr: '', de: '', ru: '' })
+      ])
       
       let imagenUrl = null
       if (imageFile) {
@@ -145,14 +129,13 @@ export default function NewProductPage() {
         orden: Date.now(),
       })
 
-      toast.success(shouldTranslate ? 'Producto creado y traducido a 5 idiomas' : 'Producto creado', { id: 'saving' })
+      toast.success('Producto creado y traducido a 4 idiomas', { id: 'saving' })
       router.push('/admin/productos')
     } catch (error) {
       console.error('Error creating product:', error)
       toast.error('Error al crear el producto', { id: 'saving' })
     } finally {
       setIsSaving(false)
-      setIsTranslating(false)
     }
   }
 
@@ -176,7 +159,7 @@ export default function NewProductPage() {
         </div>
       </div>
 
-      <form onSubmit={(e) => handleSubmit(e, true)} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-6">
         <Card className="border-gray-800 bg-gray-950/50">
           <CardContent className="p-6">
             <Label className="text-white">Imagen del producto</Label>
@@ -237,7 +220,7 @@ export default function NewProductPage() {
                 className="mt-1 bg-gray-900 border-gray-700 text-white"
                 placeholder="Ej: Mojito"
               />
-              <p className="text-xs text-gray-500 mt-1">Se traducirá automáticamente a 5 idiomas</p>
+              <p className="text-xs text-gray-500 mt-1">Se traducirá automáticamente a 4 idiomas</p>
             </div>
 
             <div>
@@ -249,7 +232,7 @@ export default function NewProductPage() {
                 className="mt-1 bg-gray-900 border-gray-700 text-white"
                 placeholder="Descripción del producto"
               />
-              <p className="text-xs text-gray-500 mt-1">Se traducirá automáticamente a 5 idiomas</p>
+              <p className="text-xs text-gray-500 mt-1">Se traducirá automáticamente a 4 idiomas</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -309,22 +292,10 @@ export default function NewProductPage() {
         </Card>
 
         <div className="flex gap-3">
-          <Button 
-            type="submit" 
-            disabled={isTranslating || isSaving} 
-            className="flex-1 bg-gradient-to-r from-green-600 to-green-500"
-          >
-            {(isTranslating || isSaving) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          <Button type="submit" disabled={isSaving} className="flex-1 bg-gradient-to-r from-green-600 to-green-500">
+            {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             <Languages className="mr-2 h-4 w-4" />
-            {isTranslating ? 'Traduciendo a 5 idiomas...' : 'Guardar y traducir'}
-          </Button>
-          <Button 
-            type="button" 
-            variant="outline" 
-            onClick={(e) => handleSubmit(e, false)}
-            disabled={isTranslating || isSaving}
-          >
-            Solo guardar (sin traducir)
+            {isSaving ? 'Traduciendo...' : 'Guardar y traducir'}
           </Button>
           <Button type="button" variant="outline" onClick={() => router.back()}>
             Cancelar

@@ -1,16 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useI18n } from '@/lib/i18n'
 
 export function LanguageToggle() {
-  const [currentLang, setCurrentLang] = useState('es')
-
-  useEffect(() => {
-    const saved = localStorage.getItem('gaby-club-language')
-    if (saved && ['es', 'en', 'fr', 'de', 'ru'].includes(saved)) {
-      setCurrentLang(saved)
-    }
-  }, [])
+  const { language, setLanguage } = useI18n()
 
   const languages = [
     { code: 'es', name: 'Español', flag: '🇪🇸' },
@@ -20,11 +13,8 @@ export function LanguageToggle() {
     { code: 'ru', name: 'Русский', flag: '🇷🇺' }
   ]
 
-  const handleLanguageChange = (code: string) => {
-    if (code === currentLang) return
-    localStorage.setItem('gaby-club-language', code)
-    setCurrentLang(code)
-    window.location.reload()
+  const handleChange = (code: 'es' | 'en' | 'fr' | 'de' | 'ru') => {
+    setLanguage(code)
   }
 
   return (
@@ -32,9 +22,9 @@ export function LanguageToggle() {
       {languages.map((lang) => (
         <button
           key={lang.code}
-          onClick={() => handleLanguageChange(lang.code)}
+          onClick={() => handleChange(lang.code as any)}
           className={`h-9 w-9 rounded-full text-xl transition-all hover:scale-110 ${
-            currentLang === lang.code
+            language === lang.code
               ? 'bg-yellow-500/20 ring-2 ring-yellow-500'
               : 'opacity-60 hover:opacity-100'
           }`}

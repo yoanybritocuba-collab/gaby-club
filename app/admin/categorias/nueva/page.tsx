@@ -13,9 +13,7 @@ import { collection, addDoc } from 'firebase/firestore'
 import { translateText } from '@/lib/translate'
 import { Loader2, Languages } from 'lucide-react'
 
-// Idiomas soportados
 const LANGUAGES = [
-  { code: 'es', name: 'Español' },
   { code: 'en', name: 'English' },
   { code: 'fr', name: 'Français' },
   { code: 'de', name: 'Deutsch' },
@@ -25,32 +23,26 @@ const LANGUAGES = [
 export default function NuevaCategoriaPage() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
-  const [isTranslating, setIsTranslating] = useState(false)
   const [formData, setFormData] = useState({
     nombre: '',
     activo: true,
     order: 1
   })
 
-  // Función para traducir a todos los idiomas
   const translateToAllLanguages = async (text: string) => {
-    const translations: Record<string, string> = {}
+    const translations: Record<string, string> = { es: text }
     for (const lang of LANGUAGES) {
-      if (lang.code === 'es') {
+      try {
+        translations[lang.code] = await translateText(text, lang.code)
+      } catch (error) {
+        console.error(`Error traduciendo a ${lang.code}:`, error)
         translations[lang.code] = text
-      } else {
-        try {
-          translations[lang.code] = await translateText(text, lang.code)
-        } catch (error) {
-          console.error(`Error traduciendo a ${lang.code}:`, error)
-          translations[lang.code] = text
-        }
       }
     }
     return translations
   }
 
-  const handleSubmit = async (e: React.FormEvent, shouldTranslate: boolean = true) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
     if (!formData.nombre.trim()) {
@@ -58,23 +50,11 @@ export default function NuevaCategoriaPage() {
       return
     }
 
-    if (shouldTranslate) {
-      setIsTranslating(true)
-      toast.loading('Traduciendo a 5 idiomas...', { id: 'saving' })
-    } else {
-      setIsLoading(true)
-      toast.loading('Guardando...', { id: 'saving' })
-    }
+    setIsLoading(true)
+    toast.loading('Traduciendo a 4 idiomas...', { id: 'saving' })
     
     try {
-      let translations: Record<string, string> = {}
-      
-      if (shouldTranslate) {
-        translations = await translateToAllLanguages(formData.nombre)
-      } else {
-        // Si no traduce, solo guarda el nombre en español
-        translations = { es: formData.nombre }
-      }
+      const translations = await translateToAllLanguages(formData.nombre)
       
       await addDoc(collection(db, 'categorias_globales'), {
         nombre: formData.nombre,
@@ -87,14 +67,13 @@ export default function NuevaCategoriaPage() {
         createdAt: new Date().toISOString()
       })
       
-      toast.success(shouldTranslate ? 'Categoría creada y traducida a 5 idiomas' : 'Categoría creada correctamente', { id: 'saving' })
+      toast.success('Categoría creada y traducida a 4 idiomas', { id: 'saving' })
       router.push('/admin/categorias')
     } catch (error) {
       console.error('Error:', error)
       toast.error('Error al crear la categoría', { id: 'saving' })
     } finally {
       setIsLoading(false)
-      setIsTranslating(false)
     }
   }
 
@@ -103,10 +82,10 @@ export default function NuevaCategoriaPage() {
       <Card>
         <CardHeader>
           <CardTitle>Nueva Categoría</CardTitle>
-          <p className="text-sm text-gray-500">El nombre se traducirá automáticamente a 5 idiomas (Español, Inglés, Francés, Alemán, Ruso)</p>
+          <p className="text-sm text-gray-500">El nombre se traducirá automáticamente a Inglés, Francés, Alemán y Ruso</p>
         </CardHeader>
         <CardContent>
-          <form onSubmit={(e) => handleSubmit(e, true)} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <Label>Nombre (español) *</Label>
               <Input
@@ -135,22 +114,10 @@ export default function NuevaCategoriaPage() {
             </div>
             
             <div className="flex gap-2 pt-4">
-              <Button 
-                type="submit" 
-                disabled={isTranslating || isLoading} 
-                className="flex-1 bg-gradient-to-r from-green-600 to-green-500"
-              >
-                {(isTranslating || isLoading) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              <Button type="submit" disabled={isLoading} className="flex-1 bg-gradient-to-r from-green-600 to-green-500">
+                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 <Languages className="mr-2 h-4 w-4" />
-                {isTranslating ? 'Traduciendo a 5 idiomas...' : 'Guardar y traducir'}
-              </Button>
-              <Button 
-                type="button" 
-                variant="outline" 
-                onClick={(e) => handleSubmit(e, false)}
-                disabled={isTranslating || isLoading}
-              >
-                Solo guardar (sin traducir)
+                {isLoading ? 'Traduciendo...' : 'Guardar y traducir'}
               </Button>
               <Button type="button" variant="outline" onClick={() => router.back()}>
                 Cancelar
