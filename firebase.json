@@ -7,7 +7,11 @@
   ],
   "hosting": {
     "public": "public",
-    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
     "rewrites": [
       {
         "source": "**",
@@ -17,5 +21,8 @@
   },
   "firestore": {
     "rules": "firestore.rules"
+  },
+  "extensions": {
+    "firestore-translate-text": "firebase/firestore-translate-text@0.1.27"
   }
 }

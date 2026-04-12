@@ -4,5 +4,11 @@
     "sabor-dominicano": "sabor-dominicano-20358"
   },
   "targets": {},
-  "etags": {}
+  "etags": {
+    "gaby-club": {
+      "extensionInstances": {
+        "firestore-translate-text": "39c11e6d0f921c90f9a48726984bcf075e4d228b4526a63fb69c93de635e6d89"
+      }
+    }
+  }
 }
