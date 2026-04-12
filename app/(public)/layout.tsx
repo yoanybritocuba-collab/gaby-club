@@ -1,26 +1,22 @@
+'use client'
+
+import { useI18n } from '@/lib/i18n'
 import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
 import { WhatsAppButton } from '@/components/WhatsAppButton'
-import type { Metadata } from 'next'
-
-export const metadata: Metadata = {
-  title: "Gaby's Club | Coctelería y Picaderas",
-  description: "El mejor lugar para disfrutar de cócteles y picaderas en Barcelona",
-  icons: {
-    icon: '/logo.png',
-  },
-}
 
 export default function PublicLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const { language } = useI18n()
+
   return (
     <>
-      <Navbar />
-      <main className="flex-1">{children}</main>
-      <Footer />
+      <Navbar key={`navbar-${language}`} />
+      <main className="flex-1" key={`main-${language}`}>{children}</main>
+      <Footer key={`footer-${language}`} />
       <WhatsAppButton />
     </>
   )
