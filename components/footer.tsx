@@ -20,25 +20,19 @@ import { db } from '@/lib/firebase'
 import { doc, getDoc } from 'firebase/firestore'
 
 function HiddenLink({ href, children, className }: { href: string; children: React.ReactNode; className?: string }) {
-  return (
-    <Link href={href} className={className}>
-      {children}
-    </Link>
-  )
+  return <Link href={href} className={className}>{children}</Link>
 }
 
 function HiddenExternalLink({ href, children, className }: { href: string; children: React.ReactNode; className?: string }) {
-  return (
-    <a href={href} target="_blank" rel="noopener noreferrer" className={className}>
-      {children}
-    </a>
-  )
+  return <a href={href} target="_blank" rel="noopener noreferrer" className={className}>{children}</a>
 }
 
 export function Footer() {
   const [horarioAbierto, setHorarioAbierto] = useState(false)
   const [config, setConfig] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [bgColor, setBgColor] = useState('#1a1a1a')
+  const [textColor, setTextColor] = useState('#9ca3af')
 
   useEffect(() => {
     const loadConfig = async () => {
@@ -49,7 +43,7 @@ export function Footer() {
           const data = docSnap.data()
           setConfig({
             restaurante: {
-              nombre: data.nombre || 'Gavi-Club',
+              nombre: data.nombre || 'Gaby\'s Club',
               direccion: data.direccion || '',
               telefono: data.telefono || '',
               whatsapp: data.whatsapp || '',
@@ -69,11 +63,12 @@ export function Footer() {
               domingo: { apertura: '12:00', cierre: '00:00' }
             }
           })
+          setBgColor(data.footerBgColor || '#1a1a1a')
+          setTextColor(data.footerTextColor || '#9ca3af')
         } else {
-          // Configuración por defecto
           setConfig({
             restaurante: {
-              nombre: 'Gavi-Club',
+              nombre: 'Gaby\'s Club',
               direccion: 'Carrer del Tropazi, 24, Gràcia, 08012 Barcelona',
               telefono: '+34634492023',
               whatsapp: '+34634492023',
@@ -115,9 +110,9 @@ export function Footer() {
 
   if (isLoading) {
     return (
-      <footer className="border-t bg-muted/50 py-8">
+      <footer className="border-t py-8" style={{ backgroundColor: bgColor }}>
         <div className="container mx-auto px-4 text-center">
-          <Loader2 className="h-6 w-6 animate-spin mx-auto text-primary" />
+          <Loader2 className="h-6 w-6 animate-spin mx-auto" style={{ color: textColor }} />
         </div>
       </footer>
     )
@@ -133,32 +128,32 @@ export function Footer() {
   }
 
   return (
-    <footer className="border-t bg-muted/50">
+    <footer style={{ backgroundColor: bgColor, color: textColor }}>
       <div className="container mx-auto px-4 py-12">
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           
           {/* Columna 1: Restaurante */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <Utensils className="h-6 w-6 text-primary" />
-              <h3 className="font-serif text-2xl font-bold text-primary">{restaurante.nombre}</h3>
+              <Utensils className="h-6 w-6" style={{ color: textColor }} />
+              <h3 className="font-serif text-2xl font-bold" style={{ color: textColor }}>{restaurante.nombre}</h3>
             </div>
             <div className="space-y-3 text-sm">
               <div className="flex items-start gap-2">
-                <MapPin className="h-4 w-4 mt-0.5 text-muted-foreground" />
-                <span className="text-muted-foreground">{restaurante.direccion}</span>
+                <MapPin className="h-4 w-4 mt-0.5" style={{ color: textColor }} />
+                <span>{restaurante.direccion}</span>
               </div>
               <div className="flex items-center gap-2">
-                <Phone className="h-4 w-4 text-muted-foreground" />
-                <span className="text-muted-foreground">{restaurante.telefono}</span>
+                <Phone className="h-4 w-4" style={{ color: textColor }} />
+                <span>{restaurante.telefono}</span>
               </div>
               <div className="flex items-center gap-2">
-                <MessageCircle className="h-4 w-4 text-muted-foreground" />
-                <span className="text-muted-foreground">{restaurante.whatsapp}</span>
+                <MessageCircle className="h-4 w-4" style={{ color: textColor }} />
+                <span>{restaurante.whatsapp}</span>
               </div>
               <div className="flex items-center gap-2">
-                <Mail className="h-4 w-4 text-muted-foreground" />
-                <span className="text-muted-foreground">{restaurante.email}</span>
+                <Mail className="h-4 w-4" style={{ color: textColor }} />
+                <span>{restaurante.email}</span>
               </div>
             </div>
             
@@ -167,7 +162,8 @@ export function Footer() {
               {redesSociales.instagram && (
                 <HiddenExternalLink 
                   href={`https://instagram.com/${redesSociales.instagram.replace('@', '')}`}
-                  className="text-muted-foreground transition-all hover:text-pink-500 hover:scale-110"
+                  className="transition-all hover:scale-110 hover:text-pink-500"
+                  style={{ color: textColor }}
                 >
                   <Instagram className="h-5 w-5" />
                 </HiddenExternalLink>
@@ -175,7 +171,8 @@ export function Footer() {
               {redesSociales.facebook && (
                 <HiddenExternalLink 
                   href={`https://facebook.com/${redesSociales.facebook}`}
-                  className="text-muted-foreground transition-all hover:text-blue-600 hover:scale-110"
+                  className="transition-all hover:scale-110 hover:text-blue-600"
+                  style={{ color: textColor }}
                 >
                   <Facebook className="h-5 w-5" />
                 </HiddenExternalLink>
@@ -187,9 +184,10 @@ export function Footer() {
           <div className="space-y-4">
             <button
               onClick={() => setHorarioAbierto(!horarioAbierto)}
-              className="flex items-center gap-2 font-semibold text-muted-foreground hover:text-foreground transition-colors"
+              className="flex items-center gap-2 font-semibold transition-colors hover:opacity-80"
+              style={{ color: textColor }}
             >
-              <Clock className="h-4 w-4 text-primary" />
+              <Clock className="h-4 w-4" style={{ color: textColor }} />
               Horario
               {horarioAbierto ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
             </button>
@@ -198,8 +196,8 @@ export function Footer() {
               <ul className="space-y-2 text-sm">
                 {Object.entries(horarioNormal).map(([dia, horas]: [string, any]) => (
                   <li key={dia} className="flex justify-between">
-                    <span className="text-muted-foreground">{dayNames[dia] || dia}</span>
-                    <span className="font-medium text-foreground">
+                    <span>{dayNames[dia] || dia}</span>
+                    <span className="font-medium">
                       {formatHorario(horas.apertura, horas.cierre)}
                     </span>
                   </li>
@@ -210,19 +208,19 @@ export function Footer() {
 
           {/* Columna 3: Enlaces rápidos */}
           <div className="space-y-4">
-            <h4 className="font-semibold text-foreground">Enlaces</h4>
+            <h4 className="font-semibold">Enlaces</h4>
             <ul className="space-y-2 text-sm">
-              <li><HiddenLink href="/carta" className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2"><Globe className="h-3 w-3" /> Carta</HiddenLink></li>
-              <li><HiddenLink href="/reservas" className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2"><Globe className="h-3 w-3" /> Reservas</HiddenLink></li>
-              <li><HiddenLink href="/sugerencias" className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2"><Globe className="h-3 w-3" /> Sugerencias</HiddenLink></li>
-              <li><HiddenLink href="/ubicacion" className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2"><Globe className="h-3 w-3" /> Ubicación</HiddenLink></li>
+              <li><HiddenLink href="/carta" className="flex items-center gap-2 transition-colors hover:opacity-80" style={{ color: textColor }}><Globe className="h-3 w-3" /> Carta</HiddenLink></li>
+              <li><HiddenLink href="/reservas" className="flex items-center gap-2 transition-colors hover:opacity-80" style={{ color: textColor }}><Globe className="h-3 w-3" /> Reservas</HiddenLink></li>
+              <li><HiddenLink href="/sugerencias" className="flex items-center gap-2 transition-colors hover:opacity-80" style={{ color: textColor }}><Globe className="h-3 w-3" /> Sugerencias</HiddenLink></li>
+              <li><HiddenLink href="/ubicacion" className="flex items-center gap-2 transition-colors hover:opacity-80" style={{ color: textColor }}><Globe className="h-3 w-3" /> Ubicación</HiddenLink></li>
             </ul>
           </div>
         </div>
 
         {/* Copyright */}
-        <div className="mt-12 border-t pt-6">
-          <p className="text-center text-sm text-muted-foreground">
+        <div className="mt-12 border-t pt-6" style={{ borderColor: `${textColor}30` }}>
+          <p className="text-center text-sm" style={{ color: textColor }}>
             © {new Date().getFullYear()} {restaurante.nombre}. Todos los derechos reservados.
           </p>
         </div>
