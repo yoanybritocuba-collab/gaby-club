@@ -127,14 +127,8 @@ export default function HomePage() {
 
       <section className="py-16 bg-gradient-to-b from-black to-gray-950">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <div className="text-center group">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-800/50 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Truck className="h-8 w-8 text-gold" />
-              </div>
-              <h3 className="font-semibold mb-1 text-white">{t('features.delivery.title')}</h3>
-              <p className="text-sm text-gray-400">{t('features.delivery.subtitle')}</p>
-            </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+            {/* Icono 1: Sabor Casero */}
             <div className="text-center group">
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-800/50 flex items-center justify-center group-hover:scale-110 transition-transform">
                 <Heart className="h-8 w-8 text-gold" />
@@ -142,6 +136,7 @@ export default function HomePage() {
               <h3 className="font-semibold mb-1 text-white">{t('features.homemade.title')}</h3>
               <p className="text-sm text-gray-400">{t('features.homemade.subtitle')}</p>
             </div>
+            {/* Icono 2: Calidad */}
             <div className="text-center group">
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-800/50 flex items-center justify-center group-hover:scale-110 transition-transform">
                 <Shield className="h-8 w-8 text-gold" />
@@ -149,6 +144,7 @@ export default function HomePage() {
               <h3 className="font-semibold mb-1 text-white">{t('features.quality.title')}</h3>
               <p className="text-sm text-gray-400">{t('features.quality.subtitle')}</p>
             </div>
+            {/* Icono 3: Horario Flexible */}
             <div className="text-center group">
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-800/50 flex items-center justify-center group-hover:scale-110 transition-transform">
                 <Clock className="h-8 w-8 text-gold" />
@@ -189,7 +185,7 @@ export default function HomePage() {
           </div>
           <div className="mt-12 text-center">
             <Link href="/carta">
-              <Button variant="outline" size="lg" className="rounded-full px-8 border-gold text-gold hover:bg-gold hover:text-black">
+              <Button variant="outline" size="lg" className="rounded-full px-8 border-gold text-gold hover:shadow-gold transition-all duration-300">
                 {t('home.discoverMenu')} <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>

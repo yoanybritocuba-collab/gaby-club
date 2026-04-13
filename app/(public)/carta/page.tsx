@@ -15,7 +15,8 @@ import { LineaInformativa } from '@/components/LineaInformativa'
 
 export default function MenuPage() {
   const { t, language } = useI18n()
-  const [view, setView] = useState<'grid' | 'list'>('grid')
+  // Vista por defecto: 'list' en lugar de 'grid'
+  const [view, setView] = useState<'grid' | 'list'>('list')
   const [activeCategory, setActiveCategory] = useState<string>('todo')
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({})
   const [expandedProduct, setExpandedProduct] = useState<string | null>(null)
@@ -369,11 +370,11 @@ export default function MenuPage() {
                     key={category.id} 
                     id={`cat-btn-${category.id}`} 
                     onClick={() => changeCategory(category.id)} 
-                    variant={isActive ? "default" : "outline"} 
+                    variant="outline"
                     size="default" 
                     className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap flex-shrink-0 transition-all duration-300 ${
                       isActive 
-                        ? 'bg-gold text-black border-gold hover:shadow-gold' 
+                        ? 'bg-gold text-black border-gold' 
                         : 'bg-black border-2 border-gold text-gold hover:shadow-gold'
                     }`}
                   >
@@ -391,8 +392,20 @@ export default function MenuPage() {
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-end mb-6">
           <div className="flex items-center gap-2 bg-gray-900/30 rounded-lg p-1">
-            <button onClick={() => setView('grid')} className={cn("h-8 w-8 rounded-md flex items-center justify-center", view === 'grid' ? "bg-gold text-black shadow-sm" : "text-gray-400 hover:bg-gray-800")}><LayoutGrid className="h-4 w-4" /></button>
-            <button onClick={() => setView('list')} className={cn("h-8 w-8 rounded-md flex items-center justify-center", view === 'list' ? "bg-gold text-black shadow-sm" : "text-gray-400 hover:bg-gray-800")}><List className="h-4 w-4" /></button>
+            <button 
+              onClick={() => setView('grid')} 
+              className={cn("h-8 w-8 rounded-md flex items-center justify-center transition-all", view === 'grid' ? "bg-gold text-black shadow-sm" : "text-gray-400 hover:bg-gray-800")}
+              title={t('menu.gridView')}
+            >
+              <LayoutGrid className="h-4 w-4" />
+            </button>
+            <button 
+              onClick={() => setView('list')} 
+              className={cn("h-8 w-8 rounded-md flex items-center justify-center transition-all", view === 'list' ? "bg-gold text-black shadow-sm" : "text-gray-400 hover:bg-gray-800")}
+              title={t('menu.listView')}
+            >
+              <List className="h-4 w-4" />
+            </button>
           </div>
         </div>
 
