@@ -8,10 +8,7 @@ interface LineaInformativaProps {
     texto: string
     colorTexto: string
     colorFondo: string
-    tamanioLetra: number
-    tipoLetra: string
     velocidad: number
-    tiempoEntre: number
     altura: number
     posicion: 'top' | 'bottom'
   }
@@ -30,13 +27,13 @@ export function LineaInformativa({ config }: LineaInformativaProps) {
       timeoutRef.current = setTimeout(() => {
         setIsVisible(true)
       }, 100)
-    }, (config.velocidad + config.tiempoEntre) * 1000)
+    }, (config.velocidad + 2) * 1000)
 
     return () => {
       clearInterval(interval)
       if (timeoutRef.current) clearTimeout(timeoutRef.current)
     }
-  }, [config.activo, config.velocidad, config.tiempoEntre])
+  }, [config.activo, config.velocidad])
 
   if (!config.activo || !config.texto) return null
 
@@ -55,8 +52,6 @@ export function LineaInformativa({ config }: LineaInformativaProps) {
         className="whitespace-nowrap"
         style={{
           animation: `marquee ${config.velocidad}s linear infinite`,
-          fontFamily: config.tipoLetra,
-          fontSize: `${config.tamanioLetra}px`,
           color: config.colorTexto,
           display: 'inline-block',
           opacity: isVisible ? 1 : 0,
