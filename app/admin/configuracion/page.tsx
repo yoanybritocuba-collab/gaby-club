@@ -9,7 +9,7 @@ import {
   Monitor, MoveHorizontal, Gauge, Repeat, AlignCenter, AlignLeft as AlignLeftIcon, AlignRight,
   Brush, Contrast, Eye as EyeIcon, Sliders, Box, Layers, Zap, Droplet,
   Menu, Home, Star, Heart, Truck, Coffee, Utensils, Wine, ShoppingCart, Plus, Minus,
-  ChevronLeft, ChevronRight, Search, Filter, Grid3x3, List, ArrowUp, ArrowRight
+  ChevronLeft, Search, Filter, Grid3x3, List, ArrowUp, ArrowRight
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
