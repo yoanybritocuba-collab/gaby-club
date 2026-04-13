@@ -12,8 +12,8 @@ interface LineaInformativaProps {
     tipoLetra: string
     velocidad: number
     tiempoEntre: number
-    ancho: number
-    posicion: 'left' | 'center' | 'right'
+    altura: number
+    posicion: 'top' | 'bottom'
   }
 }
 
@@ -40,19 +40,15 @@ export function LineaInformativa({ config }: LineaInformativaProps) {
 
   if (!config.activo || !config.texto) return null
 
-  const marginStyle = {
-    marginLeft: config.posicion === 'center' ? 'auto' : config.posicion === 'right' ? 'auto' : '0',
-    marginRight: config.posicion === 'center' ? 'auto' : config.posicion === 'left' ? 'auto' : '0'
-  }
+  const positionClass = config.posicion === 'top' ? 'top-0' : 'bottom-0'
 
   return (
     <div 
-      className="w-full overflow-hidden"
+      className={`fixed left-0 right-0 ${positionClass} z-40 w-full overflow-hidden`}
       style={{ 
         backgroundColor: config.colorFondo,
-        width: `${config.ancho}%`,
-        ...marginStyle,
-        borderRadius: '0px'
+        height: `${config.altura}px`,
+        lineHeight: `${config.altura}px`
       }}
     >
       <div
@@ -62,17 +58,17 @@ export function LineaInformativa({ config }: LineaInformativaProps) {
           fontFamily: config.tipoLetra,
           fontSize: `${config.tamanioLetra}px`,
           color: config.colorTexto,
-          padding: '8px 0',
           display: 'inline-block',
-          opacity: isVisible ? 1 : 0
+          opacity: isVisible ? 1 : 0,
+          paddingRight: '20px'
         }}
       >
         {config.texto}
       </div>
       <style>{`
         @keyframes marquee {
-          0% { transform: translateX(100%); }
-          100% { transform: translateX(-100%); }
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
         }
       `}</style>
     </div>
