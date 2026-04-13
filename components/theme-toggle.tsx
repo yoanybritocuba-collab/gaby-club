@@ -33,17 +33,17 @@ export function ThemeToggle() {
   if (!mounted) {
     return (
       <Button variant="ghost" size="icon" className="h-9 w-9 sm:h-10 sm:w-10 md:h-12 md:w-12">
-        <Sun className="h-5 w-5 sm:h-5 sm:w-5 md:h-6 md:w-6 text-yellow-500" />
+        <Sun className="h-5 w-5 sm:h-5 sm:w-5 md:h-6 md:w-6 text-gold" />
       </Button>
     )
   }
 
   return (
-    <Button variant="ghost" size="icon" onClick={toggleTheme} className="h-9 w-9 sm:h-10 sm:w-10 md:h-12 md:w-12">
+    <Button variant="ghost" size="icon" onClick={toggleTheme} className="h-9 w-9 sm:h-10 sm:w-10 md:h-12 md:w-12 text-gold hover:text-gold-light hover:bg-gold/10">
       {theme === 'dark' ? (
-        <Sun className="h-5 w-5 sm:h-5 sm:w-5 md:h-6 md:w-6 text-yellow-500" />
+        <Sun className="h-5 w-5 sm:h-5 sm:w-5 md:h-6 md:w-6" />
       ) : (
-        <Moon className="h-5 w-5 sm:h-5 sm:w-5 md:h-6 md:w-6 text-yellow-500" />
+        <Moon className="h-5 w-5 sm:h-5 sm:w-5 md:h-6 md:w-6" />
       )}
     </Button>
   )
