@@ -2,101 +2,85 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  body {
-    @apply bg-black text-white;
-  }
+body {
+  background-color: black;
+  color: white;
 }
 
-@layer components {
-  .text-gold {
-    color: #d1b275;
-  }
+.text-gold {
+  color: #d1b275;
+}
 
-  .border-gold {
-    border-color: #d1b275;
-  }
+.border-gold {
+  border-color: #d1b275;
+}
 
-  .bg-gold {
-    background-color: #d1b275;
-  }
+.bg-gold {
+  background-color: #d1b275;
+}
 
-  .bg-gradient-gold {
-    background: linear-gradient(135deg, #d1b275 0%, #b89a5e 100%);
-  }
+.btn-gold {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s;
+  font-weight: 600;
+  background: linear-gradient(135deg, #d1b275 0%, #b89a5e 100%);
+  color: #0a0a0a;
+  box-shadow: 0 4px 15px rgba(209, 178, 117, 0.3);
+}
 
-  .btn-gold {
-    @apply relative overflow-hidden transition-all duration-300 font-semibold;
-    background: linear-gradient(135deg, #d1b275 0%, #b89a5e 100%);
-    color: #0a0a0a;
-    box-shadow: 0 4px 15px rgba(209, 178, 117, 0.3);
-  }
+.btn-gold:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(209, 178, 117, 0.5);
+}
 
-  .btn-gold:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(209, 178, 117, 0.5);
-  }
+.btn-outline-gold {
+  border: 2px solid #d1b275;
+  background: transparent;
+  color: #d1b275;
+  transition: all 0.3s;
+}
 
-  .btn-gold:active {
-    transform: translateY(0);
-  }
+.btn-outline-gold:hover {
+  background-color: #d1b275;
+  color: #0a0a0a;
+  box-shadow: 0 4px 15px rgba(209, 178, 117, 0.3);
+}
 
-  .btn-outline-gold {
-    @apply border-2 bg-transparent transition-all duration-300;
-    border-color: #d1b275;
-    color: #d1b275;
-  }
+input, select, textarea {
+  background-color: #111827;
+  border: 1px solid #374151;
+  color: white;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  transition: all 0.2s;
+}
 
-  .btn-outline-gold:hover {
-    background-color: #d1b275;
-    color: #0a0a0a;
-    box-shadow: 0 4px 15px rgba(209, 178, 117, 0.3);
-  }
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: #d1b275;
+  box-shadow: 0 0 0 2px rgba(209, 178, 117, 0.2);
+}
 
-  .shadow-gold {
-    box-shadow: 0 0 20px rgba(209, 178, 117, 0.3);
-  }
+a:hover {
+  color: #d1b275;
+}
 
-  .shadow-gold-hover:hover {
-    box-shadow: 0 0 30px rgba(209, 178, 117, 0.5);
-  }
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
 
-  /* Inputs y selects */
-  input, select, textarea {
-    @apply bg-gray-900 border border-gray-700 text-white rounded-lg px-4 py-2 transition-all;
-  }
+::-webkit-scrollbar-track {
+  background: #111827;
+  border-radius: 9999px;
+}
 
-  input:focus, select:focus, textarea:focus {
-    @apply outline-none;
-    border-color: #d1b275;
-    box-shadow: 0 0 0 2px rgba(209, 178, 117, 0.2);
-  }
+::-webkit-scrollbar-thumb {
+  background: #d1b275;
+  border-radius: 9999px;
+}
 
-  /* Links */
-  a {
-    @apply transition-all duration-200;
-  }
-
-  a:hover {
-    color: #d1b275;
-  }
-
-  /* Scrollbar */
-  ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
-
-  ::-webkit-scrollbar-track {
-    @apply bg-gray-900 rounded-full;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: #d1b275;
-    border-radius: 9999px;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: #b89a5e;
-  }
+::-webkit-scrollbar-thumb:hover {
+  background: #b89a5e;
 }
