@@ -344,13 +344,13 @@ export default function MenuPage() {
       {tickerConfig && <LineaInformativa config={tickerConfig} />}
 
       {/* Hero Banner - ajustado debajo de la barra de navegación */}
-      <div className="pt-16 md:pt-20">
+      <div className="pt-[70px] md:pt-[85px]">
         {cartaImagen && (
-          <div className="relative h-[40vh] min-h-[300px] w-full overflow-hidden">
+          <div className="relative h-[30vh] min-h-[200px] md:h-[35vh] w-full overflow-hidden">
             <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${cartaImagen})` }} />
             <div className="absolute inset-0 bg-black/50" />
             <div className="relative z-10 flex h-full flex-col items-center justify-center text-center text-white px-4">
-              <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-4">{getCartaTitulo()}</h1>
+              <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold mb-4">{getCartaTitulo()}</h1>
             </div>
           </div>
         )}
