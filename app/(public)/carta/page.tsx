@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { LayoutGrid, List, Plus, Minus, ArrowUp, ChevronLeft, ChevronRight, X, Maximize2, Star, Loader2 } from 'lucide-react'
+import Link from 'next/link'
+import { LayoutGrid, List, Plus, Minus, ArrowUp, ChevronLeft, ChevronRight, X, Maximize2, Star, Loader2, Home } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { addToCart } from '@/lib/cart-store'
@@ -15,7 +16,6 @@ import { LineaInformativa } from '@/components/LineaInformativa'
 
 export default function MenuPage() {
   const { t, language } = useI18n()
-  // Vista por defecto: 'list' en lugar de 'grid'
   const [view, setView] = useState<'grid' | 'list'>('list')
   const [activeCategory, setActiveCategory] = useState<string>('todo')
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({})
@@ -342,6 +342,19 @@ export default function MenuPage() {
   return (
     <div className="min-h-screen bg-black">
       {tickerConfig && <LineaInformativa config={tickerConfig} />}
+
+      {/* Botón volver a home */}
+      <div className="fixed top-4 left-4 z-50">
+        <Link href="/">
+          <Button 
+            variant="outline" 
+            size="icon"
+            className="bg-black border-2 border-gold text-gold hover:shadow-gold transition-all duration-300 rounded-full h-10 w-10"
+          >
+            <Home className="h-5 w-5" />
+          </Button>
+        </Link>
+      </div>
 
       <div className="pt-[70px] md:pt-[85px]">
         {cartaImagen && (
