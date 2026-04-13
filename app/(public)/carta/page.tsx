@@ -2,14 +2,11 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { LayoutGrid, List, Plus, Minus, ArrowUp, ChevronLeft, ChevronRight, X, Maximize2, Star, Loader2, Home, Wine } from 'lucide-react'
+import { LayoutGrid, List, ArrowUp, ChevronLeft, ChevronRight, X, Maximize2, Star, Loader2, Home, Wine } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { addToCart } from '@/lib/cart-store'
-import { cn } from '@/lib/utils'
-import { toast } from 'sonner'
-import { getAllProductos, getCategoriasActivasGlobales, type Producto, type CategoriaGlobal } from '@/lib/firebase-services'
 import { useI18n } from '@/lib/i18n'
+import { getAllProductos, getCategoriasActivasGlobales, type Producto, type CategoriaGlobal } from '@/lib/firebase-services'
 import { db } from '@/lib/firebase'
 import { doc, getDoc } from 'firebase/firestore'
 import { LineaInformativa } from '@/components/LineaInformativa'
@@ -18,7 +15,6 @@ export default function MenuPage() {
   const { t, language } = useI18n()
   const [view, setView] = useState<'grid' | 'list'>('list')
   const [activeCategory, setActiveCategory] = useState<string>('todo')
-  const [quantities, setQuantities] = useState<{ [key: string]: number }>({})
   const [expandedProduct, setExpandedProduct] = useState<string | null>(null)
   const [expandedCategoryId, setExpandedCategoryId] = useState<string>('')
   const [showScrollTop, setShowScrollTop] = useState(false)
@@ -145,21 +141,6 @@ export default function MenuPage() {
   }
 
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
-  
-  const updateQuantity = (productId: string, delta: number) => {
-    setQuantities(prev => ({ ...prev, [productId]: Math.max(0, (prev[productId] || 0) + delta) }))
-  }
-
-  const handleAddToCart = (product: Producto, productId: string) => {
-    const quantity = quantities[productId] || 1
-    if (quantity > 0) {
-      const productName = product.nombre || ''
-      addToCart({ id: product.id, name: productName, price: product.precio, image: product.imagenUrl }, quantity)
-      toast.success(`${productName} ${t('common.added')}`, { duration: 2000 })
-      setQuantities(prev => ({ ...prev, [productId]: 0 }))
-      setExpandedProduct(null)
-    }
-  }
 
   const toggleExpand = (productId: string, categoryId: string) => {
     if (expandedProduct === productId) {
@@ -242,7 +223,6 @@ export default function MenuPage() {
       return (
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {productsList.map((product) => {
-            const quantity = quantities[product.id] || 0
             const productName = product.nombre || ''
             const productDescription = product.descripcion || ''
             const isSuggested = product.destacado === true
@@ -260,14 +240,11 @@ export default function MenuPage() {
                     {product.imagenUrl ? <img src={product.imagenUrl} alt={productName} className="h-full w-full object-cover transition-transform group-hover:scale-105" /> : <div className="flex h-full items-center justify-center text-4xl bg-gray-800">🍽️</div>}
                   </div>
                   <div className="p-4">
-                    <div className="flex items-start justify-between gap-2 mb-2"><h3 className="font-bold text-base text-white">{productName}</h3><p className="font-bold text-lg text-gold">€{product.precio.toFixed(2)}</p></div>
-                    {productDescription && <p className="text-sm text-gray-400 line-clamp-2 mb-3">{productDescription}</p>}
-                    <div className="flex items-center justify-end gap-2 mt-2">
-                      {quantity > 0 && <><Button size="icon" variant="outline" className="h-8 w-8" onClick={(e) => { e.stopPropagation(); updateQuantity(product.id, -1); }}><Minus className="h-3 w-3" /></Button><span className="w-6 text-center font-medium text-white">{quantity}</span></>}
-                      <Button size={quantity > 0 ? "icon" : "default"} className={cn(quantity > 0 ? "h-8 w-8" : "gap-1")} onClick={(e) => { e.stopPropagation(); if (quantity === 0) updateQuantity(product.id, 1); else handleAddToCart(product, product.id); }}>
-                        {quantity === 0 ? <>Agregar <Plus className="h-3 w-3" /></> : <Plus className="h-3 w-3" />}
-                      </Button>
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <h3 className="font-bold text-base text-white">{productName}</h3>
+                      <p className="font-bold text-lg text-gold">€{product.precio.toFixed(2)}</p>
                     </div>
+                    {productDescription && <p className="text-sm text-gray-400 line-clamp-2 mb-3">{productDescription}</p>}
                   </div>
                 </CardContent>
               </Card>
@@ -279,7 +256,6 @@ export default function MenuPage() {
     return (
       <div className="space-y-4">
         {productsList.map((product) => {
-          const quantity = quantities[product.id] || 0
           const productName = product.nombre || ''
           const productDescription = product.descripcion || ''
           const isExpanded = expandedProduct === product.id
@@ -300,13 +276,17 @@ export default function MenuPage() {
                     {product.imagenUrl ? <img src={product.imagenUrl} alt={productName} className="h-full w-full object-cover" /> : <div className="flex h-full items-center justify-center text-3xl">🍽️</div>}
                   </div>
                   <div className="flex-1 p-3 sm:p-4">
-                    <div className="flex items-start justify-between gap-2"><div className="flex-1"><h3 className="font-semibold text-sm sm:text-base text-white">{productName}</h3>{productDescription && <p className="text-xs text-gray-400 line-clamp-2 mt-1">{productDescription}</p>}</div><p className="font-bold text-base sm:text-lg text-gold whitespace-nowrap">€{product.precio.toFixed(2)}</p></div>
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-sm sm:text-base text-white">{productName}</h3>
+                        {productDescription && <p className="text-xs text-gray-400 line-clamp-2 mt-1">{productDescription}</p>}
+                      </div>
+                      <p className="font-bold text-base sm:text-lg text-gold whitespace-nowrap">€{product.precio.toFixed(2)}</p>
+                    </div>
                     <div className="flex items-center justify-end gap-2 mt-3">
-                      {quantity > 0 && <><Button size="icon" variant="outline" className="h-7 w-7 sm:h-8 sm:w-8" onClick={(e) => { e.stopPropagation(); updateQuantity(product.id, -1); }}><Minus className="h-3 w-3" /></Button><span className="w-6 text-center font-medium text-white text-sm">{quantity}</span></>}
-                      <Button size={quantity > 0 ? "icon" : "sm"} className={cn(quantity > 0 ? "h-7 w-7 sm:h-8 sm:w-8" : "gap-1 h-7 sm:h-8 text-xs sm:text-sm")} onClick={(e) => { e.stopPropagation(); if (quantity === 0) updateQuantity(product.id, 1); else handleAddToCart(product, product.id); }}>
-                        {quantity === 0 ? <>Agregar <Plus className="h-3 w-3" /></> : <Plus className="h-3 w-3" />}
+                      <Button size="sm" variant="ghost" className="h-7 w-7 sm:h-8 sm:w-8 text-gold hover:text-gold-dark hover:bg-gold/10" onClick={(e) => { e.stopPropagation(); toggleExpand(product.id, currentCategoryId); }}>
+                        <Maximize2 className="h-3 w-3" />
                       </Button>
-                      <Button size="icon" variant="ghost" className="h-7 w-7 sm:h-8 sm:w-8" onClick={(e) => { e.stopPropagation(); toggleExpand(product.id, currentCategoryId); }}><Maximize2 className="h-3 w-3" /></Button>
                     </div>
                   </div>
                 </div>
@@ -323,14 +303,15 @@ export default function MenuPage() {
                   <div className="aspect-[4/3] bg-gray-800 rounded-xl overflow-hidden mb-4">
                     {product.imagenUrl ? <img src={product.imagenUrl} alt={productName} className="h-full w-full object-cover" /> : <div className="flex h-full items-center justify-center text-6xl">🍽️</div>}
                   </div>
-                  <div className="flex items-start justify-between gap-2 mb-2"><h3 className="text-xl font-bold text-white">{productName}</h3><p className="text-2xl font-bold text-gold">€{product.precio.toFixed(2)}</p></div>
+                  <div className="flex items-start justify-between gap-2 mb-2">
+                    <h3 className="text-xl font-bold text-white">{productName}</h3>
+                    <p className="text-2xl font-bold text-gold">€{product.precio.toFixed(2)}</p>
+                  </div>
                   {productDescription && <p className="text-sm text-gray-400 mb-4 leading-relaxed">{productDescription}</p>}
-                  <div className="flex items-center justify-end gap-3 mt-4 pt-3 border-t border-gray-800">
-                    {quantity > 0 && <><Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); updateQuantity(product.id, -1); }}><Minus className="h-3 w-3" /></Button><span className="w-8 text-center font-semibold text-white">{quantity}</span></>}
-                    <Button size="default" onClick={(e) => { e.stopPropagation(); if (quantity === 0) updateQuantity(product.id, 1); else handleAddToCart(product, product.id); }} className="gap-2">
-                      {quantity === 0 ? t('menu.addToOrder') : `${t('common.confirm')} ${quantity} x €${product.precio.toFixed(2)}`} <Plus className="h-4 w-4" />
+                  <div className="flex items-center justify-end mt-4 pt-3 border-t border-gray-800">
+                    <Button size="sm" variant="ghost" onClick={(e) => { e.stopPropagation(); toggleExpand(product.id, currentCategoryId); }}>
+                      <X className="h-4 w-4" />
                     </Button>
-                    <Button size="sm" variant="ghost" onClick={(e) => { e.stopPropagation(); toggleExpand(product.id, currentCategoryId); }}><X className="h-4 w-4" /></Button>
                   </div>
                 </div>
               )}
@@ -361,15 +342,15 @@ export default function MenuPage() {
     <div className="min-h-screen bg-black">
       {tickerConfig && <LineaInformativa config={tickerConfig} />}
 
-      {/* Botón volver a home - más abajo para no tapar navbar */}
-      <div className="fixed top-20 left-4 z-50">
+      {/* Botón volver a home - más abajo y más pequeño */}
+      <div className="fixed top-24 left-4 z-50">
         <Link href="/">
           <Button 
             variant="outline" 
             size="icon"
-            className="bg-black border-2 border-gold text-gold hover:shadow-gold transition-all duration-300 rounded-full h-10 w-10"
+            className="bg-black border-2 border-gold text-gold hover:shadow-gold transition-all duration-300 rounded-full h-8 w-8"
           >
-            <Home className="h-5 w-5" />
+            <Home className="h-4 w-4" />
           </Button>
         </Link>
       </div>
