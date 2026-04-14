@@ -403,14 +403,19 @@ export default function MenuPage() {
         </div>
       )}
 
-      {/* Anuncio "Pedir en barra" - más grande y con animación */}
+      {/* Anuncio "Pedir en barra" - efecto llamativo con destello y movimiento */}
       <div className="container mx-auto px-4 py-6 text-center">
-        <div className="inline-block animate-pulse-slow">
-          <p className="text-gold text-lg md:text-xl font-bold tracking-wide">
-            🍸 {getAnuncioTexto()} 🍹
-          </p>
+        <div className="inline-block animate-llamativo">
+          <div className="relative px-6 py-3 bg-gradient-to-r from-gold/20 via-gold/40 to-gold/20 rounded-full border border-gold shadow-lg shadow-gold/20">
+            {/* Efecto de destello */}
+            <div className="absolute inset-0 rounded-full bg-gold/20 animate-pulse-shine" />
+            {/* Efecto de borde brillante */}
+            <div className="absolute inset-0 rounded-full border-2 border-gold/50 animate-border-pulse" />
+            <p className="text-gold text-lg md:text-xl font-bold tracking-wide relative z-10">
+              🍸 {getAnuncioTexto()} 🍹
+            </p>
+          </div>
         </div>
-        <div className="w-20 h-px bg-gold/50 mx-auto mt-3" />
       </div>
 
       <div className="pt-2"></div>
@@ -485,18 +490,43 @@ export default function MenuPage() {
       {showScrollTop && <Button className="fixed bottom-6 right-6 rounded-full shadow-lg z-50 h-10 w-10 bg-gold hover:bg-gold-dark text-black" size="icon" onClick={scrollToTop}><ArrowUp className="h-4 w-4" /></Button>}
 
       <style jsx>{`
-        @keyframes pulse-slow {
+        @keyframes llamativo {
           0%, 100% {
-            opacity: 1;
             transform: scale(1);
           }
           50% {
-            opacity: 0.9;
             transform: scale(1.02);
           }
         }
-        .animate-pulse-slow {
-          animation: pulse-slow 2s ease-in-out infinite;
+        @keyframes pulse-shine {
+          0% {
+            opacity: 0;
+          }
+          50% {
+            opacity: 0.5;
+          }
+          100% {
+            opacity: 0;
+          }
+        }
+        @keyframes border-pulse {
+          0%, 100% {
+            border-color: rgba(209, 178, 117, 0.3);
+            box-shadow: 0 0 0 0 rgba(209, 178, 117, 0.2);
+          }
+          50% {
+            border-color: rgba(209, 178, 117, 0.8);
+            box-shadow: 0 0 10px 2px rgba(209, 178, 117, 0.4);
+          }
+        }
+        .animate-llamativo {
+          animation: llamativo 1.5s ease-in-out infinite;
+        }
+        .animate-pulse-shine {
+          animation: pulse-shine 2s ease-in-out infinite;
+        }
+        .animate-border-pulse {
+          animation: border-pulse 1.5s ease-in-out infinite;
         }
       `}</style>
     </div>
