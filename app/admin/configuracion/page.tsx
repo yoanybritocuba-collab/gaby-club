@@ -54,9 +54,9 @@ export default function ConfiguracionPage() {
   const [tickerColorFondo, setTickerColorFondo] = useState('#000000')
   const [tickerTamanioLetra, setTickerTamanioLetra] = useState(14)
   const [tickerTipoLetra, setTickerTipoLetra] = useState('Arial')
-  const [tickerVelocidad, setTickerVelocidad] = useState(15)
+  const [tickerVelocidad, setTickerVelocidad] = useState(15)      // segundos para cruzar
+  const [tickerTiempoEntre, setTickerTiempoEntre] = useState(2)    // pausa entre ciclos
   const [tickerAltura, setTickerAltura] = useState(40)
-  const [tickerPosicion, setTickerPosicion] = useState<'top' | 'bottom'>('top')
 
   const fuentes = [
     'Arial', 'Helvetica', 'Times New Roman', 'Georgia', 'Verdana', 'Courier New',
@@ -92,8 +92,8 @@ export default function ConfiguracionPage() {
           setTickerTamanioLetra(data.tickerTamanioLetra || 14)
           setTickerTipoLetra(data.tickerTipoLetra || 'Arial')
           setTickerVelocidad(data.tickerVelocidad || 15)
+          setTickerTiempoEntre(data.tickerTiempoEntre || 2)
           setTickerAltura(data.tickerAltura || 40)
-          setTickerPosicion(data.tickerPosicion || 'top')
         }
       } catch (error) {
         console.error('Error cargando configuración:', error)
@@ -109,7 +109,6 @@ export default function ConfiguracionPage() {
     }
   }, [])
 
-  // Cambiar contraseña
   const handleChangePassword = async () => {
     if (!currentPassword || !newPassword) {
       toast.error('Completa todos los campos')
@@ -182,8 +181,8 @@ export default function ConfiguracionPage() {
         tickerTamanioLetra,
         tickerTipoLetra,
         tickerVelocidad,
+        tickerTiempoEntre,
         tickerAltura,
-        tickerPosicion,
         updatedAt: new Date().toISOString()
       })
       toast.success('Línea informativa guardada', { id: 'saving' })
@@ -335,14 +334,14 @@ export default function ConfiguracionPage() {
               Línea Informativa (Ticker)
             </CardTitle>
             <CardDescription className="text-gray-400">
-              Configura la línea que se desplaza de extremo a extremo
+              Configura la línea que se desplaza de derecha a izquierda
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex items-center justify-between p-4 bg-gray-900/50 rounded-lg">
               <div>
                 <Label className="text-white font-medium">Activar línea informativa</Label>
-                <p className="text-sm text-gray-400">Muestra el ticker en la parte superior o inferior</p>
+                <p className="text-sm text-gray-400">Muestra el ticker justo debajo de la barra de navegación</p>
               </div>
               <Switch checked={tickerActivo} onCheckedChange={setTickerActivo} />
             </div>
@@ -356,7 +355,7 @@ export default function ConfiguracionPage() {
                     onChange={(e) => setTickerTexto(e.target.value)} 
                     rows={2} 
                     className="mt-1 bg-gray-900 border-gray-700 text-white"
-                    placeholder="Ej: 🍸 Envío gratis desde 20€ | 🍹 Happy Hour 18-20h"
+                    placeholder="Ej: 🍸 Envío gratis desde 20€ | 🍹 Happy Hour 18-20h | 🎵 Música en vivo"
                   />
                 </div>
 
@@ -403,10 +402,20 @@ export default function ConfiguracionPage() {
                       <Gauge className="h-4 w-4" /> Velocidad (segundos)
                     </Label>
                     <div className="flex items-center gap-4 mt-1">
-                      <input type="range" min="5" max="30" step="1" value={tickerVelocidad} onChange={(e) => setTickerVelocidad(parseInt(e.target.value))} className="flex-1" />
+                      <input type="range" min="3" max="60" step="1" value={tickerVelocidad} onChange={(e) => setTickerVelocidad(parseInt(e.target.value))} className="flex-1" />
                       <span className="text-gray-400 w-12">{tickerVelocidad}s</span>
                     </div>
-                    <p className="text-xs text-gray-500 mt-1">Tiempo que tarda en cruzar la pantalla</p>
+                    <p className="text-xs text-gray-500 mt-1">Tiempo que tarda en cruzar la pantalla (menor = más rápido)</p>
+                  </div>
+                  <div>
+                    <Label className="text-white flex items-center gap-2">
+                      <Timer className="h-4 w-4" /> Tiempo entre repeticiones (s)
+                    </Label>
+                    <div className="flex items-center gap-4 mt-1">
+                      <input type="range" min="0" max="10" step="0.5" value={tickerTiempoEntre} onChange={(e) => setTickerTiempoEntre(parseFloat(e.target.value))} className="flex-1" />
+                      <span className="text-gray-400 w-12">{tickerTiempoEntre}s</span>
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">Pausa entre cada ciclo (0 = continuo)</p>
                   </div>
                   <div>
                     <Label className="text-white">Altura de la línea (px)</Label>
@@ -415,15 +424,9 @@ export default function ConfiguracionPage() {
                       <span className="text-gray-400 w-12">{tickerAltura}px</span>
                     </div>
                   </div>
-                  <div>
-                    <Label className="text-white">Posición</Label>
-                    <div className="flex gap-2 mt-1">
-                      <Button type="button" variant={tickerPosicion === 'top' ? 'default' : 'outline'} className="flex-1" onClick={() => setTickerPosicion('top')}>Arriba</Button>
-                      <Button type="button" variant={tickerPosicion === 'bottom' ? 'default' : 'outline'} className="flex-1" onClick={() => setTickerPosicion('bottom')}>Abajo</Button>
-                    </div>
-                  </div>
                 </div>
 
+                {/* Vista previa en vivo */}
                 <div className="mt-6 pt-4 border-t border-gray-800">
                   <div className="flex items-center gap-2 mb-3">
                     <Monitor className="h-4 w-4 text-green-400" />
@@ -431,13 +434,16 @@ export default function ConfiguracionPage() {
                   </div>
                   <div 
                     className="w-full overflow-hidden rounded-lg" 
-                    style={{ backgroundColor: tickerColorFondo, height: `${tickerAltura}px` }}
+                    style={{ 
+                      backgroundColor: tickerColorFondo, 
+                      height: `${tickerAltura}px`
+                    }}
                   >
                     <div className="h-full flex items-center">
                       <div 
-                        className="whitespace-nowrap animate-marquee"
-                        style={{ 
-                          animationDuration: `${tickerVelocidad}s`,
+                        className="whitespace-nowrap"
+                        style={{
+                          animation: `marquee ${tickerVelocidad}s linear ${tickerTiempoEntre}s infinite`,
                           fontFamily: tickerTipoLetra,
                           fontSize: `${tickerTamanioLetra}px`,
                           color: tickerColorTexto,
@@ -545,15 +551,10 @@ export default function ConfiguracionPage() {
         </Card>
       )}
 
-      <style>{`
+      <style jsx global>{`
         @keyframes marquee {
           0% { transform: translateX(0); }
           100% { transform: translateX(-50%); }
-        }
-        .animate-marquee {
-          animation-name: marquee;
-          animation-iteration-count: infinite;
-          animation-timing-function: linear;
         }
       `}</style>
     </div>
