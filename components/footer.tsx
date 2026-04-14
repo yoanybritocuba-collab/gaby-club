@@ -133,6 +133,7 @@ export function Footer() {
               </a>
             </div>
             
+            {/* Redes Sociales */}
             <div className="flex gap-4 pt-2">
               <a 
                 href={instagramUrl}
@@ -183,7 +184,7 @@ export function Footer() {
             )}
           </div>
 
-          {/* Columna 3: Enlaces rápidos - Reservas va a WhatsApp */}
+          {/* Columna 3: Enlaces rápidos */}
           <div className="space-y-4">
             <h4 className="font-semibold" style={{ color: textColor }}>Enlaces</h4>
             <ul className="space-y-2 text-sm">
