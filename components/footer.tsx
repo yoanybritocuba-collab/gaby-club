@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { 
-  Instagram, Facebook, Phone, Mail, Clock, Utensils, ChevronDown, ChevronUp, MapPin, MessageCircle, Globe, Loader2
+  Instagram, Facebook, Phone, Mail, Clock, Wine, ChevronDown, ChevronUp, MapPin, MessageCircle, Globe, Loader2
 } from 'lucide-react'
 import { db } from '@/lib/firebase'
 import { doc, getDoc } from 'firebase/firestore'
@@ -22,8 +22,28 @@ export function Footer() {
   const [horarioAbierto, setHorarioAbierto] = useState(false)
   const [config, setConfig] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [bgColor, setBgColor] = useState('#1a1a1a')
-  const [textColor, setTextColor] = useState('#9ca3af')
+  const [bgColor, setBgColor] = useState('#000000')
+  const [textColor, setTextColor] = useState('#d1b275')
+
+  // Datos fijos del negocio
+  const negocio = {
+    nombre: "Gaby's Club",
+    direccion: "Carrer del Tropazi, 24, Gràcia, 08012 Barcelona",
+    telefono: "+34634492023",
+    whatsapp: "+34634492023",
+    email: "info@gabysclub.com",
+    instagram: "gabys_club",
+    tiktok: "GABYSCLUB",
+    horarioNormal: {
+      lunes: { apertura: '12:00', cierre: '00:00' },
+      martes: { apertura: '12:00', cierre: '00:00' },
+      miercoles: { apertura: '12:00', cierre: '00:00' },
+      jueves: { apertura: '12:00', cierre: '00:00' },
+      viernes: { apertura: '12:00', cierre: '02:00' },
+      sabado: { apertura: '12:00', cierre: '02:00' },
+      domingo: { apertura: '12:00', cierre: '00:00' }
+    }
+  }
 
   useEffect(() => {
     const loadConfig = async () => {
@@ -32,53 +52,8 @@ export function Footer() {
         const docSnap = await getDoc(docRef)
         if (docSnap.exists()) {
           const data = docSnap.data()
-          setConfig({
-            restaurante: {
-              nombre: data.nombre || "Gaby's Club",
-              direccion: data.direccion || '',
-              telefono: data.telefono || '',
-              whatsapp: data.whatsapp || '',
-              email: data.email || ''
-            },
-            redesSociales: {
-              instagram: data.instagram || '',
-              facebook: data.facebook || ''
-            },
-            horarioNormal: {
-              lunes: { apertura: '12:00', cierre: '00:00' },
-              martes: { apertura: '12:00', cierre: '00:00' },
-              miercoles: { apertura: '12:00', cierre: '00:00' },
-              jueves: { apertura: '12:00', cierre: '00:00' },
-              viernes: { apertura: '12:00', cierre: '02:00' },
-              sabado: { apertura: '12:00', cierre: '02:00' },
-              domingo: { apertura: '12:00', cierre: '00:00' }
-            }
-          })
-          setBgColor(data.footerBgColor || '#1a1a1a')
-          setTextColor(data.footerTextColor || '#9ca3af')
-        } else {
-          setConfig({
-            restaurante: {
-              nombre: "Gaby's Club",
-              direccion: 'Carrer del Tropazi, 24, Gràcia, 08012 Barcelona',
-              telefono: '+34634492023',
-              whatsapp: '+34634492023',
-              email: 'info@gaviclub.com'
-            },
-            redesSociales: {
-              instagram: '@gaviclub',
-              facebook: ''
-            },
-            horarioNormal: {
-              lunes: { apertura: '12:00', cierre: '00:00' },
-              martes: { apertura: '12:00', cierre: '00:00' },
-              miercoles: { apertura: '12:00', cierre: '00:00' },
-              jueves: { apertura: '12:00', cierre: '00:00' },
-              viernes: { apertura: '12:00', cierre: '02:00' },
-              sabado: { apertura: '12:00', cierre: '02:00' },
-              domingo: { apertura: '12:00', cierre: '00:00' }
-            }
-          })
+          setBgColor(data.footerBgColor || '#000000')
+          setTextColor(data.footerTextColor || '#d1b275')
         }
       } catch (error) {
         console.error('Error cargando configuración:', error)
@@ -109,62 +84,96 @@ export function Footer() {
     )
   }
 
-  if (!config) return null
-
-  const { restaurante, horarioNormal, redesSociales } = config
-
   const formatHorario = (apertura: string, cierre: string) => {
     if (apertura === 'Cerrado' || cierre === 'Cerrado') return translateText('day.closed')
     return `${apertura} - ${cierre}`
   }
+
+  // URLs para redes sociales
+  const instagramUrl = `https://instagram.com/${negocio.instagram.replace('@', '')}`
+  const tiktokUrl = `https://tiktok.com/@${negocio.tiktok.replace('@', '')}`
+  const whatsappUrl = `https://wa.me/${negocio.whatsapp.replace(/[^0-9]/g, '')}`
+  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(negocio.direccion)}`
 
   return (
     <footer style={{ backgroundColor: bgColor }}>
       <div className="container mx-auto px-4 py-12">
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           
-          {/* Columna 1: Restaurante */}
+          {/* Columna 1: Información del negocio */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <Utensils className="h-6 w-6" style={{ color: textColor }} />
-              <h3 className="font-serif text-2xl font-bold" style={{ color: textColor }}>{restaurante.nombre}</h3>
+              <Wine className="h-6 w-6" style={{ color: textColor }} />
+              <h3 className="font-serif text-2xl font-bold" style={{ color: textColor }}>{negocio.nombre}</h3>
             </div>
             <div className="space-y-3 text-sm">
-              <div className="flex items-start gap-2">
-                <MapPin className="h-4 w-4 mt-0.5" style={{ color: textColor }} />
-                <span style={{ color: textColor }}>{restaurante.direccion}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Phone className="h-4 w-4" style={{ color: textColor }} />
-                <span style={{ color: textColor }}>{restaurante.telefono}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <MessageCircle className="h-4 w-4" style={{ color: textColor }} />
-                <span style={{ color: textColor }}>{restaurante.whatsapp}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Mail className="h-4 w-4" style={{ color: textColor }} />
-                <span style={{ color: textColor }}>{restaurante.email}</span>
-              </div>
+              {/* Dirección - Enlace a Google Maps */}
+              <a 
+                href={mapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-start gap-2 hover:opacity-80 transition-opacity"
+                style={{ color: textColor }}
+              >
+                <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                <span>{negocio.direccion}</span>
+              </a>
+              
+              {/* Teléfono - Enlace para llamar */}
+              <a 
+                href={`tel:${negocio.telefono.replace(/[^0-9+]/g, '')}`}
+                className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+                style={{ color: textColor }}
+              >
+                <Phone className="h-4 w-4" />
+                <span>{negocio.telefono}</span>
+              </a>
+              
+              {/* WhatsApp - Enlace a WhatsApp */}
+              <a 
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+                style={{ color: textColor }}
+              >
+                <MessageCircle className="h-4 w-4" />
+                <span>{negocio.whatsapp}</span>
+              </a>
+              
+              {/* Email - Enlace para enviar correo */}
+              <a 
+                href={`mailto:${negocio.email}`}
+                className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+                style={{ color: textColor }}
+              >
+                <Mail className="h-4 w-4" />
+                <span>{negocio.email}</span>
+              </a>
             </div>
             
+            {/* Redes Sociales */}
             <div className="flex gap-4 pt-2">
-              {redesSociales.instagram && (
-                <HiddenExternalLink 
-                  href={`https://instagram.com/${redesSociales.instagram.replace('@', '')}`}
-                  className="transition-all hover:scale-110 hover:text-pink-500"
-                >
-                  <Instagram className="h-5 w-5" style={{ color: textColor }} />
-                </HiddenExternalLink>
-              )}
-              {redesSociales.facebook && (
-                <HiddenExternalLink 
-                  href={`https://facebook.com/${redesSociales.facebook}`}
-                  className="transition-all hover:scale-110 hover:text-blue-600"
-                >
-                  <Facebook className="h-5 w-5" style={{ color: textColor }} />
-                </HiddenExternalLink>
-              )}
+              <a 
+                href={instagramUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition-all hover:scale-110 hover:text-pink-500"
+                style={{ color: textColor }}
+              >
+                <Instagram className="h-5 w-5" />
+              </a>
+              <a 
+                href={tiktokUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition-all hover:scale-110 hover:text-white"
+                style={{ color: textColor }}
+              >
+                <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                </svg>
+              </a>
             </div>
           </div>
 
@@ -175,14 +184,14 @@ export function Footer() {
               className="flex items-center gap-2 font-semibold transition-colors hover:opacity-80"
               style={{ color: textColor }}
             >
-              <Clock className="h-4 w-4" style={{ color: textColor }} />
+              <Clock className="h-4 w-4" />
               {translateText('location.hours')}
               {horarioAbierto ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
             </button>
             
             {horarioAbierto && (
               <ul className="space-y-2 text-sm">
-                {Object.entries(horarioNormal).map(([dia, horas]: [string, any]) => (
+                {Object.entries(negocio.horarioNormal).map(([dia, horas]: [string, any]) => (
                   <li key={dia} className="flex justify-between">
                     <span style={{ color: textColor }}>{dayNames[dia] || dia}</span>
                     <span className="font-medium" style={{ color: textColor }}>
@@ -198,34 +207,33 @@ export function Footer() {
           <div className="space-y-4">
             <h4 className="font-semibold" style={{ color: textColor }}>{translateText('footer.links') || 'Enlaces'}</h4>
             <ul className="space-y-2 text-sm">
-              <li style={{ color: textColor }}>
-                <HiddenLink href="/carta" className="flex items-center gap-2 transition-colors hover:opacity-80">
-                  <Globe className="h-3 w-3" style={{ color: textColor }} /> {translateText('nav.menu')}
+              <li>
+                <HiddenLink href="/carta" className="flex items-center gap-2 transition-colors hover:opacity-80" style={{ color: textColor }}>
+                  <Globe className="h-3 w-3" /> {translateText('nav.menu')}
                 </HiddenLink>
               </li>
-              <li style={{ color: textColor }}>
-                <HiddenLink href="/reservas" className="flex items-center gap-2 transition-colors hover:opacity-80">
-                  <Globe className="h-3 w-3" style={{ color: textColor }} /> {translateText('nav.reservations')}
+              <li>
+                <HiddenLink href="/reservas" className="flex items-center gap-2 transition-colors hover:opacity-80" style={{ color: textColor }}>
+                  <Globe className="h-3 w-3" /> {translateText('nav.reservations')}
                 </HiddenLink>
               </li>
-              <li style={{ color: textColor }}>
-                <HiddenLink href="/sugerencias" className="flex items-center gap-2 transition-colors hover:opacity-80">
-                  <Globe className="h-3 w-3" style={{ color: textColor }} /> {translateText('nav.suggestions')}
+              <li>
+                <HiddenLink href="/sugerencias" className="flex items-center gap-2 transition-colors hover:opacity-80" style={{ color: textColor }}>
+                  <Globe className="h-3 w-3" /> {translateText('nav.suggestions')}
                 </HiddenLink>
               </li>
-              <li style={{ color: textColor }}>
-                <HiddenLink href="/ubicacion" className="flex items-center gap-2 transition-colors hover:opacity-80">
-                  <Globe className="h-3 w-3" style={{ color: textColor }} /> {translateText('nav.location')}
+              <li>
+                <HiddenLink href="/ubicacion" className="flex items-center gap-2 transition-colors hover:opacity-80" style={{ color: textColor }}>
+                  <Globe className="h-3 w-3" /> {translateText('nav.location')}
                 </HiddenLink>
               </li>
             </ul>
           </div>
         </div>
 
-        {/* Copyright */}
         <div className="mt-12 border-t pt-6" style={{ borderColor: `${textColor}30` }}>
           <p className="text-center text-sm" style={{ color: textColor }}>
-            © {new Date().getFullYear()} {restaurante.nombre}. {translateText('footer.rights')}
+            © {new Date().getFullYear()} {negocio.nombre}. {translateText('footer.rights')}
           </p>
         </div>
       </div>
