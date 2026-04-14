@@ -221,6 +221,7 @@ export default function MenuPage() {
     type: 'suggestion' | 'all' | 'normal'
   }
   
+  // Construir categorías del menú
   const menuCategories: MenuCategory[] = [
     ...(suggestedProducts.length > 0 ? [{ 
       id: 'sugerencias', 
@@ -245,10 +246,12 @@ export default function MenuPage() {
     }))
   ]
 
+  // Mostrar TODAS las categorías activas (sin filtrar por productos)
   const availableCategories = menuCategories.filter(cat => {
     if (cat.type === 'suggestion') return suggestedProducts.length > 0
-    if (cat.type === 'all') return activeProducts.length > 0
-    return activeProducts.some(p => p.categoriaGlobalId === cat.id)
+    if (cat.type === 'all') return true
+    // Mostrar todas las categorías normales activas
+    return true
   })
 
   const getGroupedProductsByCategory = () => {
