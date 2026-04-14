@@ -34,7 +34,6 @@ export default function MenuPage() {
   
   const scrollContainerRef = useRef<HTMLDivElement>(null)
 
-  // Función para obtener nombre traducido del producto
   const getTranslatedProductName = (product: Producto) => {
     if (language === 'en') return product.nameEn || product.nombre
     if (language === 'fr') return product.nameFr || product.nombre
@@ -43,7 +42,6 @@ export default function MenuPage() {
     return product.nombre
   }
 
-  // Función para obtener descripción traducida del producto
   const getTranslatedProductDescription = (product: Producto) => {
     if (language === 'en') return product.descriptionEn || product.descripcion
     if (language === 'fr') return product.descriptionFr || product.descripcion
@@ -52,7 +50,6 @@ export default function MenuPage() {
     return product.descripcion
   }
 
-  // Función para obtener nombre traducido de la categoría
   const getTranslatedCategoryName = (cat: any) => {
     if (language === 'en') return cat.nameEn || cat.nombre
     if (language === 'fr') return cat.nameFr || cat.nombre
@@ -61,7 +58,6 @@ export default function MenuPage() {
     return cat.nombre
   }
 
-  // Texto del anuncio traducible
   const getAnuncioTexto = () => {
     if (language === 'en') return "Please order at the bar"
     if (language === 'fr') return "Veuillez commander au bar"
@@ -392,7 +388,7 @@ export default function MenuPage() {
 
   return (
     <div className="min-h-screen bg-black">
-      {/* Botón volver a home - UNO SOLO, pequeño, negro con borde dorado y home dorado */}
+      {/* Botón volver a home - SOLO UNO */}
       <Link
         href="/"
         className="fixed top-24 left-4 z-50 flex h-9 w-9 items-center justify-center rounded-full bg-black border border-gold text-gold transition-all duration-300 hover:scale-110 hover:bg-gold/10 focus:outline-none"
@@ -401,7 +397,7 @@ export default function MenuPage() {
         <Home className="h-4 w-4" />
       </Link>
 
-      {/* Imagen de portada - más grande y limpia */}
+      {/* Imagen de portada */}
       {cartaImagen && (
         <div className="relative h-[45vh] min-h-[350px] md:h-[55vh] w-full overflow-hidden">
           <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${cartaImagen})` }} />
@@ -416,7 +412,7 @@ export default function MenuPage() {
         </div>
       )}
 
-      {/* Anuncio sutil - sin rectángulo llamativo */}
+      {/* Anuncio sutil */}
       <div className="container mx-auto px-4 py-4 text-center">
         <p className="text-gold text-sm md:text-base font-medium tracking-wide">
           🍸 {getAnuncioTexto()} 🍹
