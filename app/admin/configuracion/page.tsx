@@ -337,7 +337,7 @@ export default function ConfiguracionPage() {
               Línea Informativa (Ticker)
             </CardTitle>
             <CardDescription className="text-gray-400">
-              El texto se desplaza de derecha a izquierda. Después de desaparecer, espera y vuelve a empezar.
+              El texto se desplaza de derecha a izquierda. Cuando sale completamente, espera y vuelve a empezar desde el principio.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">

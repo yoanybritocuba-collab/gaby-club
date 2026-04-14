@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 interface LineaInformativaProps {
   config: {
@@ -21,8 +21,9 @@ export function LineaInformativa({ config }: LineaInformativaProps) {
   const [isClient, setIsClient] = useState(false)
   const [navbarHeight, setNavbarHeight] = useState(70)
   const [isNavbarVisible, setIsNavbarVisible] = useState(true)
-  const [isAnimating, setIsAnimating] = useState(true)
-  const [cycleKey, setCycleKey] = useState(0)
+  const [isVisible, setIsVisible] = useState(true)
+  const [key, setKey] = useState(0)
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
     setIsClient(true)
@@ -43,31 +44,37 @@ export function LineaInformativa({ config }: LineaInformativaProps) {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // Controlar el ciclo de animación y pausa
+  // Controlar el ciclo de animación
   useEffect(() => {
     if (!config.activo || !config.texto) return
 
     const velocidadMs = config.velocidad * 1000
     const pausaMs = (config.tiempoEntre || 2) * 1000
 
-    const runCycle = () => {
-      // Iniciar animación
-      setIsAnimating(true)
+    const startCycle = () => {
+      // Mostrar el texto y animar
+      setIsVisible(true)
       
-      // Al terminar la animación, pausar y luego reiniciar
-      setTimeout(() => {
-        setIsAnimating(false)
+      // Después de que termina la animación (el texto sale completo)
+      if (timeoutRef.current) clearTimeout(timeoutRef.current)
+      timeoutRef.current = setTimeout(() => {
+        // Ocultar el texto durante la pausa
+        setIsVisible(false)
         
-        // Pausa antes de reiniciar
-        setTimeout(() => {
-          // Forzar reinicio del componente con una key nueva
-          setCycleKey(prev => prev + 1)
+        // Después de la pausa, reiniciar el ciclo con una nueva key
+        if (timeoutRef.current) clearTimeout(timeoutRef.current)
+        timeoutRef.current = setTimeout(() => {
+          setKey(prev => prev + 1)
         }, pausaMs)
       }, velocidadMs)
     }
 
-    runCycle()
-  }, [config.activo, config.texto, config.velocidad, config.tiempoEntre, cycleKey])
+    startCycle()
+
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current)
+    }
+  }, [config.activo, config.texto, config.velocidad, config.tiempoEntre, key])
 
   if (!isClient) return null
   if (!config.activo || !config.texto) return null
@@ -76,7 +83,7 @@ export function LineaInformativa({ config }: LineaInformativaProps) {
 
   return (
     <div 
-      key={cycleKey}
+      key={key}
       className="fixed left-0 right-0 z-40 overflow-hidden transition-all duration-300"
       style={{ 
         backgroundColor: config.colorFondo,
@@ -86,21 +93,22 @@ export function LineaInformativa({ config }: LineaInformativaProps) {
         width: '100%'
       }}
     >
-      <div
-        className="whitespace-nowrap"
-        style={{
-          animation: isAnimating ? `marquee ${config.velocidad}s linear forwards` : 'none',
-          fontFamily: config.tipoLetra,
-          fontSize: `${config.tamanioLetra}px`,
-          color: config.colorTexto,
-          display: 'inline-block',
-          paddingRight: '20px',
-          transform: isAnimating ? 'translateX(0)' : 'translateX(100%)',
-          opacity: isAnimating ? 1 : 0
-        }}
-      >
-        {config.texto}
-      </div>
+      {isVisible && (
+        <div
+          className="whitespace-nowrap"
+          style={{
+            animation: `marquee ${config.velocidad}s linear forwards`,
+            fontFamily: config.tipoLetra,
+            fontSize: `${config.tamanioLetra}px`,
+            color: config.colorTexto,
+            display: 'inline-block',
+            paddingRight: '20px',
+            transform: 'translateX(0)'
+          }}
+        >
+          {config.texto}
+        </div>
+      )}
       <style jsx global>{`
         @keyframes marquee {
           0% { 
