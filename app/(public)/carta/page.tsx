@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { LayoutGrid, List, ArrowUp, ChevronLeft, ChevronRight, X, Maximize2, Star, Loader2, Home, Wine } from 'lucide-react'
+import { LayoutGrid, List, ArrowUp, ChevronLeft, ChevronRight, X, Maximize2, Star, Loader2, Home, Wine, Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
@@ -61,6 +61,15 @@ export default function MenuPage() {
     if (language === 'de') return cat.nameDe || cat.nombre
     if (language === 'ru') return cat.nameRu || cat.nombre
     return cat.nombre
+  }
+
+  // Texto del anuncio traducible
+  const getAnuncioTexto = () => {
+    if (language === 'en') return "Please order at the bar"
+    if (language === 'fr') return "Veuillez commander au bar"
+    if (language === 'de') return "Bitte an der Bar bestellen"
+    if (language === 'ru') return "Пожалуйста, заказывайте у бара"
+    return "Pedir en barra"
   }
 
   useEffect(() => {
@@ -415,6 +424,19 @@ export default function MenuPage() {
           </div>
         </div>
       )}
+
+      {/* ANUNCIO GRANDE - Pedir en barra */}
+      <div className="container mx-auto px-4 py-6">
+        <div className="bg-gradient-to-r from-gold/20 to-gold/10 border-2 border-gold rounded-xl p-4 text-center">
+          <div className="flex items-center justify-center gap-3 mb-2">
+            <Info className="h-6 w-6 text-gold" />
+            <span className="text-gold text-sm uppercase tracking-wider font-semibold">Información</span>
+          </div>
+          <p className="text-white text-xl md:text-2xl lg:text-3xl font-bold">
+            {getAnuncioTexto()}
+          </p>
+        </div>
+      </div>
 
       <div className="pt-2"></div>
 
