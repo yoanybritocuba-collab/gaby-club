@@ -245,10 +245,12 @@ export default function MenuPage() {
     }))
   ]
 
+  // Mostrar TODAS las categorías normales activas
   const availableCategories = menuCategories.filter(cat => {
     if (cat.type === 'suggestion') return suggestedProducts.length > 0
     if (cat.type === 'all') return true
-    return true
+    // Mostrar todas las categorías normales activas
+    return cat.type === 'normal'
   })
 
   const getGroupedProductsByCategory = () => {
