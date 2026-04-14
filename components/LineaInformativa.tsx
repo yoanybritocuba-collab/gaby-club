@@ -43,7 +43,6 @@ export function LineaInformativa({ config }: LineaInformativaProps) {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // Controlar el ciclo de animación y pausa
   useEffect(() => {
     if (!config.activo || !config.texto) return
 
@@ -103,7 +102,7 @@ export function LineaInformativa({ config }: LineaInformativaProps) {
             transform: translateX(0);
           }
           100% { 
-            transform: translateX(-50%);
+            transform: translateX(-100%);
           }
         }
       `}</style>
