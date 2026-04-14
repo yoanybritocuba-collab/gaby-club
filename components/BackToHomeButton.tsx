@@ -23,10 +23,10 @@ export function BackToHomeButton() {
   return (
     <Link
       href="/"
-      className="fixed bottom-6 right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-gold text-black shadow-lg transition-all duration-300 hover:scale-110 hover:bg-gold-dark focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-black"
+      className="fixed bottom-6 left-6 z-50 flex h-10 w-10 items-center justify-center rounded-full bg-gold text-black shadow-lg transition-all duration-300 hover:scale-110 hover:bg-gold-dark focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-black"
       aria-label="Volver al inicio"
     >
-      <Home className="h-5 w-5" />
+      <Home className="h-4 w-4" />
     </Link>
   )
 }
