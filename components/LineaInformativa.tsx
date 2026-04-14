@@ -1,42 +1,29 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { db } from '@/lib/firebase'
-import { doc, getDoc } from 'firebase/firestore'
 
-export function LineaInformativa() {
-  const [config, setConfig] = useState<any>(null)
+interface LineaInformativaProps {
+  config: {
+    activo: boolean
+    texto: string
+    colorTexto: string
+    colorFondo: string
+    tamanioLetra: number
+    tipoLetra: string
+    velocidad: number
+    tiempoEntre: number
+    altura: number
+    posicion: 'top' | 'bottom'
+    ancho?: number
+  }
+}
+
+export function LineaInformativa({ config }: LineaInformativaProps) {
   const [isVisible, setIsVisible] = useState(true)
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
-    const loadConfig = async () => {
-      try {
-        const docRef = doc(db, 'configuracion', 'vUJ7J8q0KfoLrph2QAgt')
-        const docSnap = await getDoc(docRef)
-        if (docSnap.exists()) {
-          const data = docSnap.data()
-          setConfig({
-            activo: data.tickerActivo || false,
-            texto: data.tickerTexto || '',
-            colorTexto: data.tickerColorTexto || '#d1b275',
-            colorFondo: data.tickerColorFondo || '#000000',
-            tamanioLetra: data.tickerTamanioLetra || 14,
-            tipoLetra: data.tickerTipoLetra || 'Arial',
-            velocidad: data.tickerVelocidad || 15,
-            altura: data.tickerAltura || 40,
-            posicion: data.tickerPosicion || 'top'
-          })
-        }
-      } catch (error) {
-        console.error('Error cargando línea informativa:', error)
-      }
-    }
-    loadConfig()
-  }, [])
-
-  useEffect(() => {
-    if (!config?.activo) return
+    if (!config.activo) return
 
     const interval = setInterval(() => {
       setIsVisible(false)
@@ -44,15 +31,15 @@ export function LineaInformativa() {
       timeoutRef.current = setTimeout(() => {
         setIsVisible(true)
       }, 100)
-    }, (config.velocidad + 2) * 1000)
+    }, (config.velocidad + config.tiempoEntre) * 1000)
 
     return () => {
       clearInterval(interval)
       if (timeoutRef.current) clearTimeout(timeoutRef.current)
     }
-  }, [config?.activo, config?.velocidad])
+  }, [config.activo, config.velocidad, config.tiempoEntre])
 
-  if (!config || !config.activo || !config.texto) return null
+  if (!config.activo || !config.texto) return null
 
   const positionClass = config.posicion === 'top' ? 'top-0' : 'bottom-0'
 
