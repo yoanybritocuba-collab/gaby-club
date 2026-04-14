@@ -387,7 +387,7 @@ export default function MenuPage() {
         <div className="space-y-12">
           {(currentData.data as { categoryId: string; categoryName: string; products: Producto[] }[]).map((group) => (
             <div key={group.categoryId}>
-              <h2 className="text-2xl font-bold mb-6 pb-2 border-b border-gold/30 text-white">{group.categoryName}</h2>
+              <h2 className="text-2xl font-bold mb-6 pb-2 border-b border-gold/30 text-gold">{group.categoryName}</h2>
               {renderProducts(group.products)}
             </div>
           ))}
@@ -420,23 +420,44 @@ export default function MenuPage() {
           <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${cartaImagen})` }} />
           <div className="absolute inset-0 bg-black/50" />
           <div className="relative z-10 flex h-full flex-col items-center justify-center text-center text-white px-4">
-            <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold mb-4">{getCartaTitulo()}</h1>
+            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold font-serif tracking-wide text-gold">
+              {getCartaTitulo()}
+            </h1>
           </div>
         </div>
       )}
 
-      {/* ANUNCIO GRANDE - Pedir en barra */}
+      {/* ANUNCIO GRANDE - Pedir en barra con efecto llamativo */}
       <div className="container mx-auto px-4 py-6">
-        <div className="bg-gradient-to-r from-gold/20 to-gold/10 border-2 border-gold rounded-xl p-4 text-center">
+        <div className="relative overflow-hidden bg-gradient-to-r from-gold/30 via-gold/20 to-gold/30 border-2 border-gold rounded-xl p-5 text-center shadow-lg shadow-gold/20 animate-pulse-gold">
+          <div className="absolute inset-0 bg-gold/5 animate-shimmer" />
           <div className="flex items-center justify-center gap-3 mb-2">
-            <Info className="h-6 w-6 text-gold" />
+            <Info className="h-6 w-6 text-gold animate-bounce" />
             <span className="text-gold text-sm uppercase tracking-wider font-semibold">Información</span>
           </div>
-          <p className="text-white text-xl md:text-2xl lg:text-3xl font-bold">
+          <p className="text-white text-xl md:text-2xl lg:text-3xl font-bold tracking-wide">
             {getAnuncioTexto()}
           </p>
         </div>
       </div>
+
+      <style jsx>{`
+        @keyframes pulse-gold {
+          0%, 100% { box-shadow: 0 0 0 0 rgba(209, 178, 117, 0.4); }
+          50% { box-shadow: 0 0 0 8px rgba(209, 178, 117, 0); }
+        }
+        @keyframes shimmer {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
+        }
+        .animate-pulse-gold {
+          animation: pulse-gold 2s infinite;
+        }
+        .animate-shimmer {
+          background: linear-gradient(90deg, transparent, rgba(209, 178, 117, 0.3), transparent);
+          animation: shimmer 3s infinite;
+        }
+      `}</style>
 
       <div className="pt-2"></div>
 
@@ -469,7 +490,7 @@ export default function MenuPage() {
                         <Star className="h-3 w-3 fill-gold text-gold" />
                       </div>
                     )}
-                    {categoryName}
+                    <span className="text-gold font-medium">{categoryName}</span>
                   </Button>
                 )
               })}
