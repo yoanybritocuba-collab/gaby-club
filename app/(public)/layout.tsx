@@ -33,8 +33,8 @@ export default function PublicLayout({
             colorFondo: data.tickerColorFondo || '#000000',
             tamanioLetra: data.tickerTamanioLetra || 14,
             tipoLetra: data.tickerTipoLetra || 'Arial',
-            velocidad: data.tickerVelocidad || 15,
-            tiempoEntre: data.tickerTiempoEntre || 2,
+            velocidad: data.tickerVelocidad || 10,
+            tiempoEntre: data.tickerTiempoEntre || 3,
             altura: data.tickerAltura || 40,
             posicion: data.tickerPosicion || 'top'
           })
