@@ -13,9 +13,7 @@ import {
   Menu,
   Home,
   ChevronLeft,
-  ChevronRight,
-  Calendar,
-  Palette
+  ChevronRight
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -72,12 +70,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     }
   }, [pathname, router])
 
-  const handleLogout = () => {
+  // Función para cerrar sesión e ir al home
+  const handleLogoutAndGoHome = () => {
     localStorage.removeItem('firebase-token')
-    router.push('/admin/login')
-  }
-
-  const handleGoHome = () => {
     window.location.href = '/'
   }
 
@@ -159,22 +154,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           })}
         </nav>
 
-        <div className="border-t border-gray-800 p-3 space-y-2">
+        {/* Botón Home con doble función: cerrar sesión + ir al home */}
+        <div className="border-t border-gray-800 p-3">
           <Button
-            onClick={handleGoHome}
+            onClick={handleLogoutAndGoHome}
             variant="ghost"
             className="w-full justify-start gap-3 px-3 py-3 text-gray-400 hover:text-gold hover:bg-gray-800"
           >
             <Home className="h-5 w-5" />
-            {(sidebarOpen || !isMobile) && <span>Ir al sitio web</span>}
-          </Button>
-          <Button
-            onClick={handleLogout}
-            variant="ghost"
-            className="w-full justify-start gap-3 px-3 py-3 text-red-400 hover:text-red-300 hover:bg-red-950/50"
-          >
-            <LogOut className="h-5 w-5" />
-            {(sidebarOpen || !isMobile) && <span>Cerrar sesión</span>}
+            {(sidebarOpen || !isMobile) && <span>Home</span>}
           </Button>
         </div>
       </aside>
@@ -197,21 +185,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
           <div className="flex items-center gap-2">
             <Button
-              onClick={handleGoHome}
+              onClick={handleLogoutAndGoHome}
               variant="outline"
               size="sm"
               className="gap-2 border-gray-700 text-gray-300 hover:bg-gray-800"
             >
               <Home className="h-4 w-4" />
-              <span className="hidden sm:inline">Web</span>
-            </Button>
-            <Button
-              onClick={handleLogout}
-              variant="outline"
-              size="sm"
-              className="gap-2 border-gray-700 text-red-400 hover:bg-red-950/50"
-            >
-              <LogOut className="h-4 w-4" />
               <span className="hidden sm:inline">Salir</span>
             </Button>
           </div>
