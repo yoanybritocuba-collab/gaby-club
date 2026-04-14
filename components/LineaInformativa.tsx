@@ -10,8 +10,8 @@ interface LineaInformativaProps {
     colorFondo: string
     tamanioLetra: number
     tipoLetra: string
-    velocidad: number      // segundos para cruzar la pantalla (3-30)
-    tiempoEntre: number    // segundos de pausa después de desaparecer (1-20)
+    velocidad: number      // segundos para cruzar la pantalla
+    tiempoEntre: number    // segundos de pausa (1-20)
     altura: number
     posicion?: 'top' | 'bottom'
   }
@@ -25,26 +25,18 @@ export function LineaInformativa({ config }: LineaInformativaProps) {
   const [key, setKey] = useState(0)
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
 
+  // Detectar altura del navbar y scroll
   useEffect(() => {
     setIsClient(true)
-    
     const navbar = document.querySelector('header')
-    if (navbar) {
-      const height = navbar.offsetHeight
-      setNavbarHeight(height)
-    }
-    
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY
-      const navbarVisible = currentScrollY <= 10
-      setIsNavbarVisible(navbarVisible)
-    }
-    
+    if (navbar) setNavbarHeight(navbar.offsetHeight)
+
+    const handleScroll = () => setIsNavbarVisible(window.scrollY <= 10)
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // Controlar el ciclo de animación
+  // Controlar ciclo de animación
   useEffect(() => {
     if (!config.activo || !config.texto) return
 
@@ -52,28 +44,20 @@ export function LineaInformativa({ config }: LineaInformativaProps) {
     const pausaMs = (config.tiempoEntre || 2) * 1000
 
     const startCycle = () => {
-      // Mostrar el texto y animar
-      setIsVisible(true)
-      
-      // Después de que termina la animación (el texto sale completo)
+      setIsVisible(true) // Muestra el texto y comienza la animación
+
       if (timeoutRef.current) clearTimeout(timeoutRef.current)
       timeoutRef.current = setTimeout(() => {
-        // Ocultar el texto durante la pausa
-        setIsVisible(false)
-        
-        // Después de la pausa, reiniciar el ciclo con una nueva key
-        if (timeoutRef.current) clearTimeout(timeoutRef.current)
+        setIsVisible(false) // Oculta el texto tras la animación
+
         timeoutRef.current = setTimeout(() => {
-          setKey(prev => prev + 1)
+          setKey(prev => prev + 1) // Reinicia el ciclo
         }, pausaMs)
       }, velocidadMs)
     }
 
     startCycle()
-
-    return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current)
-    }
+    return () => { if (timeoutRef.current) clearTimeout(timeoutRef.current) }
   }, [config.activo, config.texto, config.velocidad, config.tiempoEntre, key])
 
   if (!isClient) return null
@@ -111,12 +95,8 @@ export function LineaInformativa({ config }: LineaInformativaProps) {
       )}
       <style jsx global>{`
         @keyframes marquee {
-          0% { 
-            transform: translateX(0);
-          }
-          100% { 
-            transform: translateX(-50%);
-          }
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
         }
       `}</style>
     </div>
