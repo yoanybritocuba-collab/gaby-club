@@ -90,7 +90,7 @@ export function LineaInformativa({ config }: LineaInformativaProps) {
           color: config.colorTexto,
           display: 'inline-block',
           paddingRight: '20px',
-          transform: isAnimating ? 'translateX(0)' : 'translateX(100%)',
+          transform: isAnimating ? 'translateX(0%)' : 'translateX(100%)',
           opacity: isAnimating ? 1 : 0
         }}
       >
@@ -99,7 +99,7 @@ export function LineaInformativa({ config }: LineaInformativaProps) {
       <style jsx global>{`
         @keyframes marquee {
           0% { 
-            transform: translateX(0);
+            transform: translateX(100%);
           }
           100% { 
             transform: translateX(-100%);
