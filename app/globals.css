@@ -1,216 +1,144 @@
-@import 'tailwindcss';
-@import 'tw-animate-css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@custom-variant dark (&:is(.dark *));
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --radius: 0.5rem;
+    --gold: 209 178 117;
+    --gold-dark: 180 150 90;
+  }
 
-:root {
-  /* Modo Claro */
-  --background: oklch(100% 0 0);
-  --foreground: oklch(0% 0 0);
-  --card: oklch(100% 0 0);
-  --card-foreground: oklch(0% 0 0);
-  --popover: oklch(100% 0 0);
-  --popover-foreground: oklch(0% 0 0);
-  --primary: oklch(75% 0.1 90);
-  --primary-foreground: oklch(0% 0 0);
-  --secondary: oklch(60% 0 0);
-  --secondary-foreground: oklch(100% 0 0);
-  --muted: oklch(96% 0 0);
-  --muted-foreground: oklch(45% 0 0);
-  --accent: oklch(96% 0 0);
-  --accent-foreground: oklch(0% 0 0);
-  --destructive: oklch(55% 0.25 30);
-  --destructive-foreground: oklch(100% 0 0);
-  --border: oklch(90% 0 0);
-  --input: oklch(90% 0 0);
-  --ring: oklch(75% 0.1 90);
-  --radius: 0.75rem;
-  --sidebar: oklch(98% 0 0);
-  --sidebar-foreground: oklch(0% 0 0);
-  --sidebar-primary: oklch(75% 0.1 90);
-  --sidebar-primary-foreground: oklch(0% 0 0);
-  --sidebar-accent: oklch(96% 0 0);
-  --sidebar-accent-foreground: oklch(0% 0 0);
-  --sidebar-border: oklch(90% 0 0);
-  --sidebar-ring: oklch(75% 0.1 90);
-}
-
-.dark {
-  /* Modo Oscuro - Negro y Dorado */
-  --background: oklch(7% 0 0);
-  --foreground: oklch(100% 0 0);
-  --card: oklch(10% 0 0);
-  --card-foreground: oklch(100% 0 0);
-  --popover: oklch(10% 0 0);
-  --popover-foreground: oklch(100% 0 0);
-  --primary: oklch(75% 0.12 85);
-  --primary-foreground: oklch(0% 0 0);
-  --secondary: oklch(15% 0 0);
-  --secondary-foreground: oklch(100% 0 0);
-  --muted: oklch(15% 0 0);
-  --muted-foreground: oklch(65% 0 0);
-  --accent: oklch(15% 0 0);
-  --accent-foreground: oklch(100% 0 0);
-  --destructive: oklch(55% 0.25 30);
-  --destructive-foreground: oklch(100% 0 0);
-  --border: oklch(20% 0 0);
-  --input: oklch(20% 0 0);
-  --ring: oklch(75% 0.12 85);
-  --sidebar: oklch(10% 0 0);
-  --sidebar-foreground: oklch(100% 0 0);
-  --sidebar-primary: oklch(75% 0.12 85);
-  --sidebar-primary-foreground: oklch(0% 0 0);
-  --sidebar-accent: oklch(15% 0 0);
-  --sidebar-accent-foreground: oklch(100% 0 0);
-  --sidebar-border: oklch(20% 0 0);
-  --sidebar-ring: oklch(75% 0.12 85);
-}
-
-@theme inline {
-  --font-sans: 'Inter', 'Geist', 'Geist Fallback';
-  --font-mono: 'Geist Mono', 'Geist Mono Fallback';
-  --font-display: 'Playfair Display', serif;
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+  }
 }
 
 @layer base {
   * {
-    border-color: var(--border);
+    @apply border-border;
   }
   body {
-    background-color: var(--background);
-    color: var(--foreground);
+    @apply bg-background text-foreground;
   }
 }
 
-/* ============ COLORES PERSONALIZADOS ============ */
+/* ============ COLOR ORO PERSONALIZADO ============ */
 .text-gold {
-  color: #d1b275;
+  color: rgb(209, 178, 117);
 }
 
-.border-gold {
-  border-color: #d1b275;
+.text-gold-dark {
+  color: rgb(180, 150, 90);
 }
 
 .bg-gold {
-  background-color: #d1b275;
+  background-color: rgb(209, 178, 117);
 }
 
 .bg-gold-dark {
-  background-color: #b89a5e;
+  background-color: rgb(180, 150, 90);
 }
 
-.hover\:bg-gold-dark:hover {
-  background-color: #b89a5e;
+.border-gold {
+  border-color: rgb(209, 178, 117);
 }
 
-/* ============ SOMBRA DORADA ============ */
-.shadow-gold {
-  box-shadow: 0 4px 15px rgba(209, 178, 117, 0.4);
+.hover\:bg-gold\/10:hover {
+  background-color: rgba(209, 178, 117, 0.1);
 }
 
 .hover\:shadow-gold:hover {
-  box-shadow: 0 6px 20px rgba(209, 178, 117, 0.5);
-  transition: box-shadow 0.3s ease;
+  box-shadow: 0 0 15px rgba(209, 178, 117, 0.4);
 }
 
-/* ============ BOTONES CON BORDE DORADO ============ */
-.btn-outline-gold {
-  background-color: #000000;
-  border: 2px solid #d1b275;
-  color: #d1b275;
-  transition: all 0.3s ease;
+/* ============ OCULTAR / REDUCIR TOOLBAR DE VERCEL ============ */
+#__next-vercel-toolbar,
+.vercel-toolbar,
+[data-vercel-toolbar],
+div[class*="vercel-toolbar"],
+iframe[title*="toolbar"],
+div[id*="vercel-toolbar"] {
+  transform: scale(0.001) !important;
+  opacity: 0.001 !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  position: fixed !important;
+  bottom: -100px !important;
+  right: -100px !important;
+  z-index: -99999 !important;
+  pointer-events: none !important;
 }
 
-.btn-outline-gold:hover {
-  box-shadow: 0 6px 20px rgba(209, 178, 117, 0.5);
+/* ============ ANIMACIONES ============ */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* ============ BOTONES ACTIVOS ============ */
-.btn-active-gold {
-  background-color: #d1b275;
-  color: #000000;
-  border: 2px solid #d1b275;
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out;
 }
 
-.btn-active-gold:hover {
-  box-shadow: 0 6px 20px rgba(209, 178, 117, 0.5);
-}
-
-/* ============ SCROLLBAR ============ */
+/* Scrollbar personalizada */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #111827;
-  border-radius: 9999px;
+  background: #1a1a1a;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #d1b275;
-  border-radius: 9999px;
+  background: rgb(209, 178, 117);
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #b89a5e;
-}
-
-/* ============ ANIMACIÓN PARA TICKER ============ */
-@keyframes marquee {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
-.animate-marquee {
-  animation-name: marquee;
-  animation-iteration-count: infinite;
-  animation-timing-function: linear;
-  /* Ocultar completamente el toolbar de Vercel */
-#__next-vercel-toolbar,
-.vercel-toolbar,
-[data-vercel-toolbar],
-div[class*="vercel-toolbar"],
-iframe[title*="toolbar"] {
-  display: none !important;
-  visibility: hidden !important;
-  opacity: 0 !important;
-  width: 0 !important;
-  height: 0 !important;
-  pointer-events: none !important;
-  position: fixed !important;
-  bottom: -100px !important;
-  z-index: -9999 !important;
-}
+  background: rgb(180, 150, 90);
 }
