@@ -1,6 +1,6 @@
 'use client'
 
-import { MapPin, Phone, Clock, Mail, MessageCircle, Wine, Navigation } from 'lucide-react'
+import { MapPin, Phone, Mail, MessageCircle, Wine, Navigation, Bus, Train, Car } from 'lucide-react'
 import Link from 'next/link'
 
 export default function UbicacionPage() {
@@ -9,35 +9,40 @@ export default function UbicacionPage() {
     direccion: "Carrer del Tropazi, 24, Gràcia, 08012 Barcelona",
     telefono: "+34634492023",
     whatsapp: "+34634492023",
-    email: "info@gabysclub.com",
-    horario: {
-      lunes: { apertura: '12:00', cierre: '00:00' },
-      martes: { apertura: '12:00', cierre: '00:00' },
-      miercoles: { apertura: '12:00', cierre: '00:00' },
-      jueves: { apertura: '12:00', cierre: '00:00' },
-      viernes: { apertura: '12:00', cierre: '02:00' },
-      sabado: { apertura: '12:00', cierre: '02:00' },
-      domingo: { apertura: '12:00', cierre: '00:00' }
-    }
+    email: "info@gabysclub.com"
   }
 
   const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(negocio.direccion)}`
   const whatsappUrl = `https://wa.me/${negocio.whatsapp.replace(/[^0-9]/g, '')}`
 
-  const dayNames: Record<string, string> = {
-    lunes: 'Lunes',
-    martes: 'Martes',
-    miercoles: 'Miércoles',
-    jueves: 'Jueves',
-    viernes: 'Viernes',
-    sabado: 'Sábado',
-    domingo: 'Domingo'
-  }
+  // Coordenadas aproximadas de Gràcia
+  const lat = 41.4015
+  const lng = 2.1565
 
-  const formatHorario = (apertura: string, cierre: string) => {
-    if (apertura === 'Cerrado' || cierre === 'Cerrado') return 'Cerrado'
-    return `${apertura} - ${cierre}`
-  }
+  // Enlaces de transporte
+  const transportes = [
+    {
+      icon: Bus,
+      name: "Autobús",
+      lines: ["24", "39", "H6", "V17"],
+      description: "Parada Lesseps / Travessera de Dalt",
+      url: `https://www.google.com/maps/dir//${lat},${lng}/@${lat},${lng},17z/data=!4m2!4m1!3e3`
+    },
+    {
+      icon: Train,
+      name: "Metro",
+      lines: ["L3 (Lesseps)", "L3 (Fontana)", "L7 (Gràcia)"],
+      description: "Estaciones a 5-10 minutos",
+      url: `https://www.google.com/maps/dir//${lat},${lng}/@${lat},${lng},17z/data=!4m2!4m1!3e3`
+    },
+    {
+      icon: Car,
+      name: "Coche",
+      lines: ["Ronda de Dalt (B20)", "Travessera de Dalt"],
+      description: "Aparcamiento público cercano",
+      url: `https://www.google.com/maps/dir//${lat},${lng}/@${lat},${lng},17z/data=!4m2!4m1!3e3`
+    }
+  ]
 
   return (
     <div className="min-h-screen bg-black pt-[70px] md:pt-[85px]">
@@ -57,16 +62,14 @@ export default function UbicacionPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Mapa - Estático sin iframe complejo */}
+          {/* Mapa */}
           <div className="rounded-xl overflow-hidden border border-gold/30 shadow-lg bg-gray-900">
             <div className="relative w-full h-[400px] bg-gray-800 flex items-center justify-center">
-              {/* Mapa estático de Google Maps */}
               <img
                 src={`https://maps.googleapis.com/maps/api/staticmap?center=Carrer+del+Tropazi+24+Barcelona&zoom=15&size=600x400&markers=color:gold%7CCarrer+del+Tropazi+24+Barcelona&key=AIzaSyBtZzm_wnE_lyi3F8qr8iCQdQA4TSEyozU`}
                 alt="Mapa de ubicación"
                 className="w-full h-full object-cover"
                 onError={(e) => {
-                  // Si falla la API, mostrar un mensaje
                   const target = e.target as HTMLImageElement
                   target.style.display = 'none'
                   const parent = target.parentElement
@@ -93,8 +96,9 @@ export default function UbicacionPage() {
             </div>
           </div>
 
-          {/* Información de contacto */}
+          {/* Información de contacto y transporte */}
           <div className="space-y-6">
+            {/* Información del negocio */}
             <div className="bg-gray-900/50 rounded-xl p-6 border border-gold/30">
               <div className="flex items-center gap-3 mb-4">
                 <Wine className="h-6 w-6 text-gold" />
@@ -140,22 +144,39 @@ export default function UbicacionPage() {
               </div>
             </div>
 
-            {/* Horario */}
+            {/* Cómo llegar - Transporte */}
             <div className="bg-gray-900/50 rounded-xl p-6 border border-gold/30">
               <div className="flex items-center gap-3 mb-4">
-                <Clock className="h-6 w-6 text-gold" />
-                <h2 className="text-xl font-bold text-white">Horario</h2>
+                <Navigation className="h-6 w-6 text-gold" />
+                <h2 className="text-xl font-bold text-white">Cómo llegar</h2>
               </div>
-              <ul className="space-y-2">
-                {Object.entries(negocio.horario).map(([dia, horas]) => (
-                  <li key={dia} className="flex justify-between py-1 border-b border-gray-800 last:border-0">
-                    <span className="text-gray-400">{dayNames[dia] || dia}</span>
-                    <span className="text-white font-medium">
-                      {formatHorario(horas.apertura, horas.cierre)}
-                    </span>
-                  </li>
-                ))}
-              </ul>
+              
+              <div className="space-y-4">
+                {transportes.map((transporte, index) => {
+                  const Icon = transporte.icon
+                  return (
+                    <a
+                      key={index}
+                      href={transporte.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block p-3 rounded-lg bg-gray-800/50 hover:bg-gold/10 transition-all group cursor-pointer"
+                    >
+                      <div className="flex items-start gap-3">
+                        <Icon className="h-5 w-5 text-gold mt-0.5" />
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-white group-hover:text-gold transition-colors">
+                            {transporte.name}
+                          </h3>
+                          <p className="text-sm text-gray-400">{transporte.lines.join(" • ")}</p>
+                          <p className="text-xs text-gray-500 mt-1">{transporte.description}</p>
+                        </div>
+                        <Navigation className="h-4 w-4 text-gold opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </div>
+                    </a>
+                  )
+                })}
+              </div>
             </div>
 
             {/* Botón de dirección */}
@@ -165,7 +186,7 @@ export default function UbicacionPage() {
               rel="noopener noreferrer"
               className="block w-full text-center bg-gold text-black font-semibold py-3 rounded-xl hover:bg-gold-dark transition-colors"
             >
-              Cómo llegar
+              Cómo llegar (Google Maps)
             </a>
           </div>
         </div>
