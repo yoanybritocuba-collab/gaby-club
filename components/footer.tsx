@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { 
-  Instagram, Facebook, Phone, Mail, Clock, Wine, ChevronDown, ChevronUp, MapPin, MessageCircle, Globe, Loader2
+  Instagram, Facebook, Phone, Mail, Clock, Wine, ChevronDown, ChevronUp, MapPin, MessageCircle, Globe, Loader2,
+  Menu, CalendarCheck, Star, MapPinned
 } from 'lucide-react'
 import { db } from '@/lib/firebase'
 import { doc, getDoc } from 'firebase/firestore'
@@ -187,28 +188,28 @@ export function Footer() {
             )}
           </div>
 
-          {/* Columna 3: Enlaces rápidos */}
+          {/* Columna 3: Enlaces rápidos con iconos correctos */}
           <div className="space-y-4">
             <h4 className="font-semibold" style={{ color: textColor }}>{t('footer.links') || 'Enlaces'}</h4>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link href="/carta" className="flex items-center gap-2 transition-colors hover:opacity-80" style={{ color: textColor }}>
-                  <Globe className="h-3 w-3" /> {t('nav.menu')}
+                  <Menu className="h-4 w-4" /> {t('nav.menu')}
                 </Link>
               </li>
               <li>
                 <Link href="/reservas" className="flex items-center gap-2 transition-colors hover:opacity-80" style={{ color: textColor }}>
-                  <MessageCircle className="h-3 w-3" /> {t('nav.reservations')}
+                  <CalendarCheck className="h-4 w-4" /> {t('nav.reservations')}
                 </Link>
               </li>
               <li>
                 <Link href="/sugerencias" className="flex items-center gap-2 transition-colors hover:opacity-80" style={{ color: textColor }}>
-                  <Globe className="h-3 w-3" /> {t('nav.suggestions')}
+                  <Star className="h-4 w-4" /> {t('nav.suggestions')}
                 </Link>
               </li>
               <li>
                 <Link href="/ubicacion" className="flex items-center gap-2 transition-colors hover:opacity-80" style={{ color: textColor }}>
-                  <Globe className="h-3 w-3" /> {t('nav.location')}
+                  <MapPinned className="h-4 w-4" /> {t('nav.location')}
                 </Link>
               </li>
             </ul>
