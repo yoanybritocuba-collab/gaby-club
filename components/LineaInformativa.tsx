@@ -32,11 +32,12 @@ export function LineaInformativa({ config }: LineaInformativaProps) {
 
   // Obtener el texto traducido según el idioma actual
   const getTranslatedText = () => {
+    if (!config) return ''
     if (language === 'en' && config.textoEn) return config.textoEn
     if (language === 'fr' && config.textoFr) return config.textoFr
     if (language === 'de' && config.textoDe) return config.textoDe
     if (language === 'ru' && config.textoRu) return config.textoRu
-    return config.texto
+    return config.texto || ''
   }
 
   const textoTraducido = getTranslatedText()
@@ -61,7 +62,7 @@ export function LineaInformativa({ config }: LineaInformativaProps) {
   }, [])
 
   useEffect(() => {
-    if (!config.activo || !textoTraducido) return
+    if (!config?.activo || !textoTraducido) return
 
     const velocidadMs = config.velocidad * 1000
     const pausaMs = (config.tiempoEntre || 2) * 1000
@@ -79,10 +80,10 @@ export function LineaInformativa({ config }: LineaInformativaProps) {
     }
 
     runCycle()
-  }, [config.activo, textoTraducido, config.velocidad, config.tiempoEntre, cycleKey])
+  }, [config?.activo, textoTraducido, config?.velocidad, config?.tiempoEntre, cycleKey])
 
   if (!isClient) return null
-  if (!config.activo || !textoTraducido) return null
+  if (!config?.activo || !textoTraducido) return null
 
   const topPosition = isNavbarVisible ? navbarHeight : 0
 
