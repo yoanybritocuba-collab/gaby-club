@@ -130,7 +130,7 @@ export default function CategoriasPage() {
         </CardContent>
       </Card>
 
-      {/* Vista en tarjetas para móvil y tabla para desktop */}
+      {/* Vista en tarjetas para móvil */}
       <div className="block md:hidden space-y-3">
         {filteredCategories.map((category) => (
           <Card key={category.id} className="border border-gray-800 bg-gray-950/50">
