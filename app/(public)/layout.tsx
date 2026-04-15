@@ -26,9 +26,21 @@ export default function PublicLayout({
         const docSnap = await getDoc(docRef)
         if (docSnap.exists()) {
           const data = docSnap.data()
+          console.log('Datos del ticker cargados:', {
+            activo: data.tickerActivo,
+            texto: data.tickerTexto,
+            textoEn: data.tickerTextoEn,
+            textoFr: data.tickerTextoFr,
+            textoDe: data.tickerTextoDe,
+            textoRu: data.tickerTextoRu
+          })
           setTickerConfig({
             activo: data.tickerActivo === true,
             texto: data.tickerTexto || '',
+            textoEn: data.tickerTextoEn || '',
+            textoFr: data.tickerTextoFr || '',
+            textoDe: data.tickerTextoDe || '',
+            textoRu: data.tickerTextoRu || '',
             colorTexto: data.tickerColorTexto || '#d1b275',
             colorFondo: data.tickerColorFondo || '#000000',
             tamanioLetra: data.tickerTamanioLetra || 14,
