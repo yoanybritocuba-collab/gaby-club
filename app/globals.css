@@ -24,8 +24,6 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
     --radius: 0.5rem;
-    --gold: 209 178 117;
-    --gold-dark: 180 150 90;
   }
 
   .dark {
@@ -53,10 +51,11 @@
 
 @layer base {
   * {
-    @apply border-border;
+    border-color: hsl(var(--border));
   }
   body {
-    @apply bg-background text-foreground;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
   }
 }
 
@@ -89,7 +88,7 @@
   box-shadow: 0 0 15px rgba(209, 178, 117, 0.4);
 }
 
-/* ============ OCULTAR / REDUCIR TOOLBAR DE VERCEL ============ */
+/* ============ OCULTAR TOOLBAR DE VERCEL ============ */
 #__next-vercel-toolbar,
 .vercel-toolbar,
 [data-vercel-toolbar],
