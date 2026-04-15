@@ -7,10 +7,8 @@ import {
 } from 'lucide-react'
 import { db } from '@/lib/firebase'
 import { doc, getDoc } from 'firebase/firestore'
-import { useI18n } from '@/lib/i18n'
 
 export function Footer() {
-  const { t } = useI18n()
   const [horarioAbierto, setHorarioAbierto] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [bgColor, setBgColor] = useState('#000000')
@@ -59,13 +57,13 @@ export function Footer() {
   }, [])
 
   const dayNames: Record<string, string> = {
-    lunes: t('day.monday'),
-    martes: t('day.tuesday'),
-    miercoles: t('day.wednesday'),
-    jueves: t('day.thursday'),
-    viernes: t('day.friday'),
-    sabado: t('day.saturday'),
-    domingo: t('day.sunday')
+    lunes: 'Lunes',
+    martes: 'Martes',
+    miercoles: 'Miércoles',
+    jueves: 'Jueves',
+    viernes: 'Viernes',
+    sabado: 'Sábado',
+    domingo: 'Domingo'
   }
 
   if (isLoading) {
@@ -79,7 +77,7 @@ export function Footer() {
   }
 
   const formatHorario = (apertura: string, cierre: string) => {
-    if (apertura === 'Cerrado' || cierre === 'Cerrado') return t('day.closed')
+    if (apertura === 'Cerrado' || cierre === 'Cerrado') return 'Cerrado'
     return `${apertura} - ${cierre}`
   }
 
@@ -161,7 +159,7 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Columna 2: Horario - UN SOLO HORARIO */}
+          {/* Columna 2: Horario */}
           <div className="space-y-4">
             <button
               onClick={() => setHorarioAbierto(!horarioAbierto)}
@@ -169,7 +167,7 @@ export function Footer() {
               style={{ color: textColor }}
             >
               <Clock className="h-4 w-4" />
-              {t('location.hours')}
+              Horario
               {horarioAbierto ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
             </button>
             
@@ -193,22 +191,22 @@ export function Footer() {
             <ul className="space-y-2 text-sm">
               <li>
                 <Link href="/carta" className="flex items-center gap-2 transition-colors hover:opacity-80" style={{ color: textColor }}>
-                  <Globe className="h-3 w-3" /> {t('nav.menu')}
+                  <Globe className="h-3 w-3" /> Carta
                 </Link>
               </li>
               <li>
                 <Link href="/reservas" className="flex items-center gap-2 transition-colors hover:opacity-80" style={{ color: textColor }}>
-                  <MessageCircle className="h-3 w-3" /> {t('nav.reservations')}
+                  <MessageCircle className="h-3 w-3" /> Reservas
                 </Link>
               </li>
               <li>
                 <Link href="/sugerencias" className="flex items-center gap-2 transition-colors hover:opacity-80" style={{ color: textColor }}>
-                  <Globe className="h-3 w-3" /> {t('nav.suggestions')}
+                  <Globe className="h-3 w-3" /> Sugerencias
                 </Link>
               </li>
               <li>
                 <Link href="/ubicacion" className="flex items-center gap-2 transition-colors hover:opacity-80" style={{ color: textColor }}>
-                  <Globe className="h-3 w-3" /> {t('nav.location')}
+                  <Globe className="h-3 w-3" /> Ubicación
                 </Link>
               </li>
             </ul>
@@ -217,7 +215,7 @@ export function Footer() {
 
         <div className="mt-12 border-t pt-6" style={{ borderColor: `${textColor}30` }}>
           <p className="text-center text-sm" style={{ color: textColor }}>
-            © {new Date().getFullYear()} {negocio.nombre}. {t('footer.rights')}
+            © {new Date().getFullYear()} {negocio.nombre}. Todos los derechos reservados.
           </p>
         </div>
       </div>

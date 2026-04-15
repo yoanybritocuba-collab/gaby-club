@@ -51,41 +51,32 @@
 
 @layer base {
   * {
-    border-color: hsl(var(--border));
+    @apply border-border;
   }
   body {
-    background-color: hsl(var(--background));
-    color: hsl(var(--foreground));
+    @apply bg-background text-foreground;
   }
 }
 
 /* ============ COLOR ORO PERSONALIZADO ============ */
 .text-gold {
-  color: rgb(209, 178, 117);
+  color: #d1b275;
 }
 
 .text-gold-dark {
-  color: rgb(180, 150, 90);
+  color: #b4965a;
 }
 
 .bg-gold {
-  background-color: rgb(209, 178, 117);
+  background-color: #d1b275;
 }
 
 .bg-gold-dark {
-  background-color: rgb(180, 150, 90);
+  background-color: #b4965a;
 }
 
 .border-gold {
-  border-color: rgb(209, 178, 117);
-}
-
-.hover\:bg-gold\/10:hover {
-  background-color: rgba(209, 178, 117, 0.1);
-}
-
-.hover\:shadow-gold:hover {
-  box-shadow: 0 0 15px rgba(209, 178, 117, 0.4);
+  border-color: #d1b275;
 }
 
 /* ============ OCULTAR TOOLBAR DE VERCEL ============ */
@@ -93,18 +84,15 @@
 .vercel-toolbar,
 [data-vercel-toolbar],
 div[class*="vercel-toolbar"],
-iframe[title*="toolbar"],
-div[id*="vercel-toolbar"] {
-  transform: scale(0.001) !important;
-  opacity: 0.001 !important;
-  width: 1px !important;
-  height: 1px !important;
-  overflow: hidden !important;
-  position: fixed !important;
-  bottom: -100px !important;
-  right: -100px !important;
-  z-index: -99999 !important;
+iframe[title*="toolbar"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
   pointer-events: none !important;
+  position: fixed !important;
+  z-index: -9999 !important;
 }
 
 /* ============ ANIMACIONES ============ */
@@ -134,10 +122,10 @@ div[id*="vercel-toolbar"] {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgb(209, 178, 117);
+  background: #d1b275;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgb(180, 150, 90);
+  background: #b4965a;
 }
