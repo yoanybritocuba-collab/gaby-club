@@ -23,6 +23,15 @@ import { uploadImage } from '@/lib/firebase-services'
 import { translateText } from '@/lib/translate'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 
+// Tipo para las traducciones del ticker
+interface TickerTraducciones {
+  es: string
+  en: string
+  fr: string
+  de: string
+  ru: string
+}
+
 export default function ConfiguracionPage() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
@@ -77,15 +86,8 @@ export default function ConfiguracionPage() {
   ]
 
   // Función para traducir el texto del ticker a todos los idiomas
-  const translateTickerToAllLanguages = async (text: string): Promise<{ es: string; en: string; fr: string; de: string; ru: string }> => {
-    const languages = [
-      { code: 'en', name: 'English' },
-      { code: 'fr', name: 'Français' },
-      { code: 'de', name: 'Deutsch' },
-      { code: 'ru', name: 'Русский' }
-    ]
-    
-    const translations: { es: string; en: string; fr: string; de: string; ru: string } = { 
+  const translateTickerToAllLanguages = async (text: string): Promise<TickerTraducciones> => {
+    const translations: TickerTraducciones = { 
       es: text, 
       en: '', 
       fr: '', 
@@ -93,13 +95,36 @@ export default function ConfiguracionPage() {
       ru: '' 
     }
     
-    for (const lang of languages) {
-      try {
-        translations[lang.code as 'en' | 'fr' | 'de' | 'ru'] = await translateText(text, lang.code)
-      } catch (error) {
-        console.error(`Error traduciendo a ${lang.code}:`, error)
-        translations[lang.code as 'en' | 'fr' | 'de' | 'ru'] = text
-      }
+    // Traducir a inglés
+    try {
+      translations.en = await translateText(text, 'en')
+    } catch (error) {
+      console.error('Error traduciendo a inglés:', error)
+      translations.en = text
+    }
+    
+    // Traducir a francés
+    try {
+      translations.fr = await translateText(text, 'fr')
+    } catch (error) {
+      console.error('Error traduciendo a francés:', error)
+      translations.fr = text
+    }
+    
+    // Traducir a alemán
+    try {
+      translations.de = await translateText(text, 'de')
+    } catch (error) {
+      console.error('Error traduciendo a alemán:', error)
+      translations.de = text
+    }
+    
+    // Traducir a ruso
+    try {
+      translations.ru = await translateText(text, 'ru')
+    } catch (error) {
+      console.error('Error traduciendo a ruso:', error)
+      translations.ru = text
     }
     
     return translations
@@ -211,7 +236,7 @@ export default function ConfiguracionPage() {
     toast.loading('Guardando y traduciendo línea informativa...', { id: 'saving' })
     
     try {
-      let tickerTraducciones: { es: string; en: string; fr: string; de: string; ru: string } = { 
+      let tickerTraducciones: TickerTraducciones = { 
         es: tickerTexto, 
         en: '', 
         fr: '', 
@@ -227,10 +252,10 @@ export default function ConfiguracionPage() {
       await updateDoc(doc(db, 'configuracion', 'vUJ7J8q0KfoLrph2QAgt'), {
         tickerActivo,
         tickerTexto,
-        tickerTextoEn: tickerTraducciones.en || '',
-        tickerTextoFr: tickerTraducciones.fr || '',
-        tickerTextoDe: tickerTraducciones.de || '',
-        tickerTextoRu: tickerTraducciones.ru || '',
+        tickerTextoEn: tickerTraducciones.en,
+        tickerTextoFr: tickerTraducciones.fr,
+        tickerTextoDe: tickerTraducciones.de,
+        tickerTextoRu: tickerTraducciones.ru,
         tickerColorTexto,
         tickerColorFondo,
         tickerTamanioLetra,
