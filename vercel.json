@@ -1,7 +1,4 @@
 {
-  "toolbar": false,
-  "devCommand": "next dev",
-  "installCommand": "npm install",
-  "buildCommand": "npm run build",
-  "outputDirectory": ".next"
+  "cleanUrls": true,
+  "trailingSlash": false
 }
