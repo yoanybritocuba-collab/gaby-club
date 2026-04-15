@@ -403,10 +403,10 @@ export default function MenuPage() {
         </div>
       )}
 
-      {/* Anuncio "Pedir en barra" - solo efecto de aumento de tamaño (3 veces) */}
+      {/* Anuncio "Pedir en barra" - con efecto de aumento, sombra dorada y repetición */}
       <div className="container mx-auto px-4 py-6 text-center">
         <div className="inline-block">
-          <p className="text-gold text-xl md:text-2xl font-bold tracking-wide animate-pulse-once">
+          <p className="text-gold text-2xl md:text-3xl lg:text-4xl font-bold tracking-wide animate-pulse-glow shadow-glow">
             🍸 {getAnuncioTexto()} 🍹
           </p>
         </div>
@@ -483,7 +483,7 @@ export default function MenuPage() {
 
       {showScrollTop && <Button className="fixed bottom-6 right-6 rounded-full shadow-lg z-50 h-10 w-10 bg-gold hover:bg-gold-dark text-black" size="icon" onClick={scrollToTop}><ArrowUp className="h-4 w-4" /></Button>}
 
-      {/* Botón home flotante en esquina inferior izquierda */}
+      {/* Botón home flotante - SOLO UNO (esquina inferior izquierda) */}
       <Link
         href="/"
         className="fixed bottom-6 left-6 z-50 flex h-10 w-10 items-center justify-center rounded-full bg-black border border-gold text-gold transition-all duration-300 hover:scale-110 hover:bg-gold/10 focus:outline-none"
@@ -493,23 +493,35 @@ export default function MenuPage() {
       </Link>
 
       <style jsx>{`
-        @keyframes pulse-once {
+        @keyframes pulse-glow {
           0%, 100% {
             transform: scale(1);
+            text-shadow: 0 0 5px rgba(209, 178, 117, 0.5);
           }
-          25% {
-            transform: scale(1.1);
+          20% {
+            transform: scale(1.15);
+            text-shadow: 0 0 20px rgba(209, 178, 117, 0.9), 0 0 30px rgba(209, 178, 117, 0.5);
           }
-          50% {
-            transform: scale(1);
-          }
-          75% {
+          40% {
             transform: scale(1.05);
+            text-shadow: 0 0 10px rgba(209, 178, 117, 0.7);
+          }
+          60% {
+            transform: scale(1.12);
+            text-shadow: 0 0 25px rgba(209, 178, 117, 0.8);
+          }
+          80% {
+            transform: scale(1.02);
+            text-shadow: 0 0 8px rgba(209, 178, 117, 0.6);
           }
         }
         
-        .animate-pulse-once {
-          animation: pulse-once 1s ease-in-out 2;
+        .animate-pulse-glow {
+          animation: pulse-glow 1.8s ease-in-out 3;
+        }
+        
+        .shadow-glow {
+          filter: drop-shadow(0 0 8px rgba(209, 178, 117, 0.4));
         }
       `}</style>
     </div>
