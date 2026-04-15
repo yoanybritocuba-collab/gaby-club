@@ -483,13 +483,13 @@ export default function MenuPage() {
 
       {showScrollTop && <Button className="fixed bottom-6 right-6 rounded-full shadow-lg z-50 h-10 w-10 bg-gold hover:bg-gold-dark text-black" size="icon" onClick={scrollToTop}><ArrowUp className="h-4 w-4" /></Button>}
 
-      {/* Botón home flotante - SOLO UNO (esquina inferior izquierda) */}
+      {/* Botón home flotante - SOLO UNO (esquina inferior izquierda) - MÁS PEQUEÑO */}
       <Link
         href="/"
-        className="fixed bottom-6 left-6 z-50 flex h-10 w-10 items-center justify-center rounded-full bg-black border border-gold text-gold transition-all duration-300 hover:scale-110 hover:bg-gold/10 focus:outline-none"
+        className="fixed bottom-6 left-6 z-50 flex h-8 w-8 items-center justify-center rounded-full bg-black border border-gold text-gold transition-all duration-300 hover:scale-110 hover:bg-gold/10 focus:outline-none"
         aria-label="Volver al inicio"
       >
-        <Home className="h-4 w-4" />
+        <Home className="h-3 w-3" />
       </Link>
 
       <style jsx>{`
