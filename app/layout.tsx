@@ -72,6 +72,43 @@ export default function RootLayout({
           </I18nProvider>
         </ThemeProvider>
         <Toaster position="bottom-center" richColors />
+        
+        {/* Script para eliminar el toolbar de Vercel en móviles */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                function removeVercelToolbar() {
+                  const selectors = [
+                    '#__next-vercel-toolbar',
+                    '.vercel-toolbar',
+                    '[data-vercel-toolbar]',
+                    'div[class*="vercel-toolbar"]',
+                    'iframe[title*="toolbar"]'
+                  ];
+                  
+                  selectors.forEach(selector => {
+                    const elements = document.querySelectorAll(selector);
+                    elements.forEach(el => {
+                      if (el) el.remove();
+                    });
+                  });
+                  
+                  const allDivs = document.querySelectorAll('div');
+                  allDivs.forEach(div => {
+                    if (div.style && div.style.position === 'fixed' && div.style.bottom === '20px' && div.style.right === '20px') {
+                      div.remove();
+                    }
+                  });
+                }
+                
+                removeVercelToolbar();
+                setTimeout(removeVercelToolbar, 1000);
+                setTimeout(removeVercelToolbar, 3000);
+              })();
+            `,
+          }}
+        />
       </body>
     </html>
   )
