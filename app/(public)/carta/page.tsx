@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { LayoutGrid, List, ArrowUp, ChevronLeft, ChevronRight, X, Maximize2, Star, Loader2, Wine, Home } from 'lucide-react'
+import { LayoutGrid, List, ArrowUp, ChevronLeft, ChevronRight, X, Maximize2, Star, Loader2, Wine } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
@@ -388,15 +388,6 @@ export default function MenuPage() {
 
   return (
     <div className="min-h-screen bg-black">
-      {/* Botón volver a home */}
-      <Link
-        href="/"
-        className="fixed top-24 left-4 z-50 flex h-9 w-9 items-center justify-center rounded-full bg-black border border-gold text-gold transition-all duration-300 hover:scale-110 hover:bg-gold/10 focus:outline-none"
-        aria-label="Volver al inicio"
-      >
-        <Home className="h-4 w-4" />
-      </Link>
-
       {/* Imagen de portada */}
       {cartaImagen && (
         <div className="relative h-[45vh] min-h-[350px] md:h-[55vh] w-full overflow-hidden">
@@ -412,16 +403,12 @@ export default function MenuPage() {
         </div>
       )}
 
-      {/* Anuncio "Pedir en barra" con efecto de tambaleo y aumento de tamaño */}
+      {/* Anuncio "Pedir en barra" - solo efecto de aumento de tamaño (3 veces) */}
       <div className="container mx-auto px-4 py-6 text-center">
         <div className="inline-block">
-          <div className="relative px-6 py-3 bg-gradient-to-r from-gold/20 via-gold/40 to-gold/20 rounded-full border-2 border-gold shadow-lg shadow-gold/20 animate-shake-text">
-            <div className="absolute inset-0 rounded-full bg-gold/20 animate-pulse-shine" />
-            <div className="absolute inset-0 rounded-full border-2 border-gold/50 animate-border-pulse" />
-            <p className="text-gold text-xl md:text-2xl lg:text-3xl font-bold tracking-wide relative z-10 animate-pulse-scale">
-              🍸 {getAnuncioTexto()} 🍹
-            </p>
-          </div>
+          <p className="text-gold text-xl md:text-2xl font-bold tracking-wide animate-pulse-once">
+            🍸 {getAnuncioTexto()} 🍹
+          </p>
         </div>
       </div>
 
@@ -496,65 +483,33 @@ export default function MenuPage() {
 
       {showScrollTop && <Button className="fixed bottom-6 right-6 rounded-full shadow-lg z-50 h-10 w-10 bg-gold hover:bg-gold-dark text-black" size="icon" onClick={scrollToTop}><ArrowUp className="h-4 w-4" /></Button>}
 
+      {/* Botón home flotante en esquina inferior izquierda */}
+      <Link
+        href="/"
+        className="fixed bottom-6 left-6 z-50 flex h-10 w-10 items-center justify-center rounded-full bg-black border border-gold text-gold transition-all duration-300 hover:scale-110 hover:bg-gold/10 focus:outline-none"
+        aria-label="Volver al inicio"
+      >
+        <Home className="h-4 w-4" />
+      </Link>
+
       <style jsx>{`
-        @keyframes shake-text {
-          0%, 100% {
-            transform: translateX(0) rotate(0deg);
-          }
-          10%, 30%, 50%, 70%, 90% {
-            transform: translateX(-3px) rotate(-1deg);
-          }
-          20%, 40%, 60%, 80% {
-            transform: translateX(3px) rotate(1deg);
-          }
-        }
-        
-        @keyframes pulse-scale {
+        @keyframes pulse-once {
           0%, 100% {
             transform: scale(1);
           }
+          25% {
+            transform: scale(1.1);
+          }
           50% {
+            transform: scale(1);
+          }
+          75% {
             transform: scale(1.05);
           }
         }
         
-        @keyframes pulse-shine {
-          0% {
-            opacity: 0;
-          }
-          50% {
-            opacity: 0.4;
-          }
-          100% {
-            opacity: 0;
-          }
-        }
-        
-        @keyframes border-pulse {
-          0%, 100% {
-            border-color: rgba(209, 178, 117, 0.3);
-            box-shadow: 0 0 0 0 rgba(209, 178, 117, 0.2);
-          }
-          50% {
-            border-color: rgba(209, 178, 117, 0.8);
-            box-shadow: 0 0 10px 2px rgba(209, 178, 117, 0.5);
-          }
-        }
-        
-        .animate-shake-text {
-          animation: shake-text 0.8s ease-in-out infinite;
-        }
-        
-        .animate-pulse-scale {
-          animation: pulse-scale 1.5s ease-in-out infinite;
-        }
-        
-        .animate-pulse-shine {
-          animation: pulse-shine 2s ease-in-out infinite;
-        }
-        
-        .animate-border-pulse {
-          animation: border-pulse 1.5s ease-in-out infinite;
+        .animate-pulse-once {
+          animation: pulse-once 1s ease-in-out 2;
         }
       `}</style>
     </div>
