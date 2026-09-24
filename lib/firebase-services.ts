@@ -6,11 +6,12 @@ import {
   getDoc, 
   addDoc, 
   updateDoc, 
-  deleteDoc, 
+  deleteDoc,
   Timestamp,
   type DocumentData
 } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import imageCompression from 'browser-image-compression';
 
 // ============ TIPOS ============
 export interface CategoriaGlobal {
@@ -151,7 +152,16 @@ export async function createProducto(data: Omit<Producto, 'id'>): Promise<string
 const storage = getStorage();
 
 export async function uploadImage(file: File, path: string): Promise<string> {
+  // Comprimir la imagen antes de subirla (arregla el problema en móviles)
+  const options = {
+    maxSizeMB: 1,
+    maxWidthOrHeight: 1920,
+    useWebWorker: true,
+  };
+
+  const compressedFile = await imageCompression(file, options);
+
   const storageRef = ref(storage, path);
-  await uploadBytes(storageRef, file);
+  await uploadBytes(storageRef, compressedFile);
   return await getDownloadURL(storageRef);
 }
