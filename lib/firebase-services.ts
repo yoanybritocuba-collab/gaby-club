@@ -12,6 +12,7 @@ import {
 } from 'firebase/firestore';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import imageCompression from 'browser-image-compression';
+import { normalizeHeicFile, isHeicFile } from 'heic-normalize';
 
 // ============ TIPOS ============
 export interface CategoriaGlobal {
@@ -152,7 +153,20 @@ export async function createProducto(data: Omit<Producto, 'id'>): Promise<string
 const storage = getStorage();
 
 export async function uploadImage(file: File, path: string): Promise<string> {
-  // 1. Comprimir la imagen para aligerarla (esto NO evita el límite, pero ayuda)
+  // 1. Normalizar HEIC a JPG (si es necesario) usando heic-normalize
+  //    Esta librería funciona en Safari (iOS) y en Chrome/Firefox/Edge (Android)
+  let fileToUpload = file;
+  
+  try {
+    if (await isHeicFile(file)) {
+      // Convierte HEIC a un File JPG
+      fileToUpload = await normalizeHeicFile(file);
+    }
+  } catch (error) {
+    console.warn('No se pudo convertir HEIC, se intentará subir tal cual:', error);
+  }
+
+  // 2. Comprimir el archivo resultante (ahora siempre es JPG)
   const options = {
     maxSizeMB: 1,
     maxWidthOrHeight: 1920,
@@ -160,10 +174,10 @@ export async function uploadImage(file: File, path: string): Promise<string> {
     fileType: 'image/jpeg',
   };
 
-  const compressedFile = await imageCompression(file, options);
+  const compressedFile = await imageCompression(fileToUpload, options);
 
-  // 2. Subida DIRECTA desde el navegador a Firebase Storage (sin pasar por Vercel)
-  //    Esto evita el límite de 4.5 MB de las Vercel Functions.
+  // 3. Subida directa desde el navegador a Firebase Storage
+  //    Usamos uploadBytesResumable para evitar el límite de 4.5MB de Vercel
   const storageRef = ref(storage, path);
   
   return new Promise((resolve, reject) => {
@@ -172,7 +186,6 @@ export async function uploadImage(file: File, path: string): Promise<string> {
     uploadTask.on(
       'state_changed',
       (snapshot) => {
-        // Opcional: aquí podrías mostrar progreso
         const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         console.log(`Subida: ${progress.toFixed(2)}%`);
       },
@@ -181,7 +194,6 @@ export async function uploadImage(file: File, path: string): Promise<string> {
         reject(error);
       },
       async () => {
-        // Subida completada
         const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
         resolve(downloadURL);
       }
