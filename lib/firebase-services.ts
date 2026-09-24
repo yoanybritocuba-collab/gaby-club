@@ -10,9 +10,8 @@ import {
   Timestamp,
   type DocumentData
 } from 'firebase/firestore';
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import imageCompression from 'browser-image-compression';
-import { heicTo, isHeic } from 'heic-to';
 
 // ============ TIPOS ============
 export interface CategoriaGlobal {
@@ -153,25 +152,7 @@ export async function createProducto(data: Omit<Producto, 'id'>): Promise<string
 const storage = getStorage();
 
 export async function uploadImage(file: File, path: string): Promise<string> {
-  let fileToUpload: File | Blob = file;
-
-  // 1. Si es HEIC (iPhone o algunos Android), convertirlo a JPG con heic-to
-  try {
-    if (await isHeic(file)) {
-      const jpegBlob = await heicTo({
-        blob: file,
-        type: 'image/jpeg',
-        quality: 0.9,
-      });
-      fileToUpload = new File([jpegBlob], path.replace(/\.heic$/i, '.jpg'), {
-        type: 'image/jpeg',
-      });
-    }
-  } catch (error) {
-    console.warn('No se pudo convertir HEIC, se intentará subir tal cual:', error);
-  }
-
-  // 2. Comprimir la imagen (ya sea JPG o el HEIC convertido) para aligerarla
+  // 1. Comprimir la imagen para aligerarla (esto NO evita el límite, pero ayuda)
   const options = {
     maxSizeMB: 1,
     maxWidthOrHeight: 1920,
@@ -179,10 +160,31 @@ export async function uploadImage(file: File, path: string): Promise<string> {
     fileType: 'image/jpeg',
   };
 
-  const compressedFile = await imageCompression(fileToUpload as File, options);
+  const compressedFile = await imageCompression(file, options);
 
-  // 3. Subir el archivo final a Firebase Storage
+  // 2. Subida DIRECTA desde el navegador a Firebase Storage (sin pasar por Vercel)
+  //    Esto evita el límite de 4.5 MB de las Vercel Functions.
   const storageRef = ref(storage, path);
-  await uploadBytes(storageRef, compressedFile);
-  return await getDownloadURL(storageRef);
+  
+  return new Promise((resolve, reject) => {
+    const uploadTask = uploadBytesResumable(storageRef, compressedFile);
+    
+    uploadTask.on(
+      'state_changed',
+      (snapshot) => {
+        // Opcional: aquí podrías mostrar progreso
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log(`Subida: ${progress.toFixed(2)}%`);
+      },
+      (error) => {
+        console.error('Error al subir:', error);
+        reject(error);
+      },
+      async () => {
+        // Subida completada
+        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+        resolve(downloadURL);
+      }
+    );
+  });
 }
