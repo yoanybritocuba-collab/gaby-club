@@ -151,27 +151,64 @@ export async function createProducto(data: Omit<Producto, 'id'>): Promise<string
 // ============ IMÁGENES ============
 const storage = getStorage();
 
-export async function uploadImage(file: File, path: string): Promise<string> {
-  // Convertir cualquier imagen (incluido HEIC de cámara) a JPG comprimido
-  // Paso 1: Leer el archivo como Blob (binario puro) para evitar problemas con HEIC
-  const fileBlob = file.slice(0, file.size, file.type);
+/**
+ * Convierte cualquier imagen (incluido HEIC de cámara) a un Blob JPG estándar.
+ * Usa <img> + <canvas> que sí funcionan con HEIC en Safari (iOS).
+ */
+async function convertToJpeg(file: File): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
 
-  // Paso 2: Opciones de compresión + conversión forzada a JPEG
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        reject(new Error('No se pudo obtener el contexto del canvas'));
+        return;
+      }
+      ctx.drawImage(img, 0, 0);
+      canvas.toBlob(
+        (blob) => {
+          if (blob) resolve(blob);
+          else reject(new Error('No se pudo convertir a JPG'));
+        },
+        'image/jpeg',
+        0.92
+      );
+    };
+
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error('No se pudo leer el archivo de imagen'));
+    };
+
+    img.src = url;
+  });
+}
+
+export async function uploadImage(file: File, path: string): Promise<string> {
+  // 1. Convertir la imagen (sea HEIC o no) a un Blob JPG estándar.
+  //    Esto arregla los archivos HEIC de cámaras de iPhone.
+  const jpegBlob = await convertToJpeg(file);
+
+  // 2. Crear un File a partir del Blob JPG para que imageCompression lo procese.
+  const jpegFile = new File([jpegBlob], path, { type: 'image/jpeg' });
+
+  // 3. Comprimir el JPG para asegurar que quede ligero.
   const options = {
     maxSizeMB: 1,
     maxWidthOrHeight: 1920,
     useWebWorker: true,
-    fileType: 'image/jpeg', // Convierte HEIC/PNG/WebP a JPG
-    initialQuality: 0.85,
+    fileType: 'image/jpeg',
   };
 
-  // Paso 3: Comprimir y convertir
-  const compressedBlob = await imageCompression(fileBlob as File, options);
+  const compressedFile = await imageCompression(jpegFile, options);
 
-  // Paso 4: Crear un nuevo File con el nombre y tipo correcto
-  const compressedFile = new File([compressedBlob], path, { type: 'image/jpeg' });
-
-  // Paso 5: Subir el archivo final a Firebase Storage
+  // 4. Subir el archivo final a Firebase Storage.
   const storageRef = ref(storage, path);
   await uploadBytes(storageRef, compressedFile);
   return await getDownloadURL(storageRef);
