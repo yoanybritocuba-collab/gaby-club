@@ -12,6 +12,7 @@ import {
 } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import imageCompression from 'browser-image-compression';
+import { heicTo, isHeic } from 'heic-to';
 
 // ============ TIPOS ============
 export interface CategoriaGlobal {
@@ -151,54 +152,26 @@ export async function createProducto(data: Omit<Producto, 'id'>): Promise<string
 // ============ IMÁGENES ============
 const storage = getStorage();
 
-/**
- * Convierte cualquier imagen (incluido HEIC de cámara) a un Blob JPG estándar.
- * Usa <img> + <canvas> que sí funcionan con HEIC en Safari (iOS).
- */
-async function convertToJpeg(file: File): Promise<Blob> {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    const url = URL.createObjectURL(file);
-
-    img.onload = () => {
-      URL.revokeObjectURL(url);
-      const canvas = document.createElement('canvas');
-      canvas.width = img.width;
-      canvas.height = img.height;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) {
-        reject(new Error('No se pudo obtener el contexto del canvas'));
-        return;
-      }
-      ctx.drawImage(img, 0, 0);
-      canvas.toBlob(
-        (blob) => {
-          if (blob) resolve(blob);
-          else reject(new Error('No se pudo convertir a JPG'));
-        },
-        'image/jpeg',
-        0.92
-      );
-    };
-
-    img.onerror = () => {
-      URL.revokeObjectURL(url);
-      reject(new Error('No se pudo leer el archivo de imagen'));
-    };
-
-    img.src = url;
-  });
-}
-
 export async function uploadImage(file: File, path: string): Promise<string> {
-  // 1. Convertir la imagen (sea HEIC o no) a un Blob JPG estándar.
-  //    Esto arregla los archivos HEIC de cámaras de iPhone.
-  const jpegBlob = await convertToJpeg(file);
+  let fileToUpload: File | Blob = file;
 
-  // 2. Crear un File a partir del Blob JPG para que imageCompression lo procese.
-  const jpegFile = new File([jpegBlob], path, { type: 'image/jpeg' });
+  // 1. Si es HEIC (iPhone o algunos Android), convertirlo a JPG con heic-to
+  try {
+    if (await isHeic(file)) {
+      const jpegBlob = await heicTo({
+        blob: file,
+        type: 'image/jpeg',
+        quality: 0.9,
+      });
+      fileToUpload = new File([jpegBlob], path.replace(/\.heic$/i, '.jpg'), {
+        type: 'image/jpeg',
+      });
+    }
+  } catch (error) {
+    console.warn('No se pudo convertir HEIC, se intentará subir tal cual:', error);
+  }
 
-  // 3. Comprimir el JPG para asegurar que quede ligero.
+  // 2. Comprimir la imagen (ya sea JPG o el HEIC convertido) para aligerarla
   const options = {
     maxSizeMB: 1,
     maxWidthOrHeight: 1920,
@@ -206,9 +179,9 @@ export async function uploadImage(file: File, path: string): Promise<string> {
     fileType: 'image/jpeg',
   };
 
-  const compressedFile = await imageCompression(jpegFile, options);
+  const compressedFile = await imageCompression(fileToUpload as File, options);
 
-  // 4. Subir el archivo final a Firebase Storage.
+  // 3. Subir el archivo final a Firebase Storage
   const storageRef = ref(storage, path);
   await uploadBytes(storageRef, compressedFile);
   return await getDownloadURL(storageRef);
