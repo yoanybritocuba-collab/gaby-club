@@ -153,11 +153,17 @@ export async function createProducto(data: Omit<Producto, 'id'>): Promise<string
 const storage = getStorage();
 
 export async function uploadImage(file: File, path: string): Promise<string> {
+  alert(`📁 Archivo recibido:\nNombre: ${file.name}\nTipo: ${file.type}\nTamaño: ${(file.size / 1024 / 1024).toFixed(2)} MB`);
+
   let fileToUpload: File | Blob = file;
 
-  // 1. Si es HEIC (iPhone o algunos Android), convertirlo a JPG con heic-to
+  // 1. Detectar si es HEIC
   try {
-    if (await isHeic(file)) {
+    const esHeic = await isHeic(file);
+    alert(`🔍 ¿Es HEIC? ${esHeic ? 'SÍ' : 'NO'}`);
+
+    if (esHeic) {
+      alert('⏳ Convirtiendo HEIC a JPG...');
       const jpegBlob = await heicTo({
         blob: file,
         type: 'image/jpeg',
@@ -166,23 +172,38 @@ export async function uploadImage(file: File, path: string): Promise<string> {
       fileToUpload = new File([jpegBlob], path.replace(/\.heic$/i, '.jpg'), {
         type: 'image/jpeg',
       });
+      alert('✅ HEIC convertido a JPG correctamente');
     }
-  } catch (error) {
-    console.warn('No se pudo convertir HEIC, se intentará subir tal cual:', error);
+  } catch (error: any) {
+    alert(`❌ Error al convertir HEIC:\n${error?.message || error}`);
   }
 
-  // 2. Comprimir la imagen (ya sea JPG o el HEIC convertido) para aligerarla
-  const options = {
-    maxSizeMB: 1,
-    maxWidthOrHeight: 1920,
-    useWebWorker: true,
-    fileType: 'image/jpeg',
-  };
+  // 2. Comprimir
+  try {
+    alert('⏳ Comprimiendo imagen...');
+    const options = {
+      maxSizeMB: 1,
+      maxWidthOrHeight: 1920,
+      useWebWorker: true,
+      fileType: 'image/jpeg',
+    };
+    const compressedFile = await imageCompression(fileToUpload as File, options);
+    fileToUpload = compressedFile;
+    alert(`✅ Imagen comprimida (${(compressedFile.size / 1024).toFixed(0)} KB)`);
+  } catch (error: any) {
+    alert(`❌ Error al comprimir:\n${error?.message || error}`);
+  }
 
-  const compressedFile = await imageCompression(fileToUpload as File, options);
-
-  // 3. Subir el archivo final a Firebase Storage
-  const storageRef = ref(storage, path);
-  await uploadBytes(storageRef, compressedFile);
-  return await getDownloadURL(storageRef);
+  // 3. Subir a Firebase
+  try {
+    alert('⏳ Subiendo a Firebase Storage...');
+    const storageRef = ref(storage, path);
+    await uploadBytes(storageRef, fileToUpload as File);
+    const url = await getDownloadURL(storageRef);
+    alert('✅ ¡Subida completada!');
+    return url;
+  } catch (error: any) {
+    alert(`❌ Error al subir:\n${error?.message || error}`);
+    throw error;
+  }
 }
