@@ -174,13 +174,13 @@ export default function NewProductPage() {
                   </Button>
                 </div>
               ) : (
-                <label className="flex h-28 w-28 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-700 hover:border-blue-500 transition-colors">
+                <label className="relative flex h-28 w-28 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-700 hover:border-blue-500 transition-colors">
                   <Upload className="h-6 w-6 text-gray-400" />
                   <span className="text-xs text-gray-400 mt-1">Subir</span>
                   <input
                     type="file"
                     accept="image/*"
-                    className="hidden"
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                     onChange={handleImageChange}
                   />
                 </label>
