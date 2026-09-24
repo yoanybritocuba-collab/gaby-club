@@ -27,6 +27,7 @@ export default function NewProductPage() {
   const [showPreview, setShowPreview] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
+  const [imageError, setImageError] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     nombre: '',
     descripcion: '',
@@ -54,15 +55,26 @@ export default function NewProductPage() {
   }
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setImageError(null)
     const file = e.target.files?.[0]
-    if (file) {
-      setImageFile(file)
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string)
-      }
-      reader.readAsDataURL(file)
+    if (!file) return
+
+    // Validar formato permitido: JPG, JPEG o PNG
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png']
+    if (!allowedTypes.includes(file.type)) {
+      setImageError(`El formato "${file.type || 'desconocido'}" no está permitido. Solo se aceptan JPG y PNG.`)
+      setImageFile(null)
+      setImagePreview(null)
+      e.target.value = ''
+      return
     }
+
+    setImageFile(file)
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      setImagePreview(reader.result as string)
+    }
+    reader.readAsDataURL(file)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -143,14 +155,24 @@ export default function NewProductPage() {
         <Card className="border-gray-800 bg-gray-950/50">
           <CardContent className="p-6">
             <Label className="text-white">Imagen del producto</Label>
-            <p className="text-sm text-gray-400 mb-2">Sube una foto del producto</p>
-            <div className="mb-4 p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/30">
-              <p className="text-xs text-yellow-400">
-                ⚠️ <strong>Formatos permitidos:</strong> JPG y PNG.<br />
-                Las fotos de iPhone en formato <strong>HEIC</strong> pueden fallar.<br />
-                Si tienes problemas, cambia en tu iPhone: <em>Ajustes → Cámara → Formatos → Máxima compatibilidad</em>.
+            <p className="text-sm text-gray-400 mb-3">Sube una foto del producto</p>
+
+            {/* Etiqueta verde: formatos permitidos */}
+            <div className="mb-4 p-3 rounded-lg bg-green-500/10 border border-green-500/40">
+              <p className="text-xs text-green-400">
+                ✅ <strong>Imágenes permitidas:</strong> JPG y PNG.
               </p>
             </div>
+
+            {/* Cartel rojo: formato incorrecto */}
+            {imageError && (
+              <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/50">
+                <p className="text-xs text-red-400">
+                  ⛔ <strong>Formato no válido.</strong> {imageError}
+                </p>
+              </div>
+            )}
+
             <div className="flex items-center gap-6">
               {imagePreview ? (
                 <div className="relative group">
@@ -164,6 +186,7 @@ export default function NewProductPage() {
                     onClick={() => {
                       setImagePreview(null)
                       setImageFile(null)
+                      setImageError(null)
                     }}
                     className="absolute -right-2 -top-2 rounded-full bg-red-500 p-1 text-white"
                   >
