@@ -1,0 +1,1 @@
+[{"origin":["https://gaby-club.vercel.app","http://localhost:3000"],"method":["GET","POST","PUT","DELETE","OPTIONS"],"responseHeader":["Content-Type","x-firebase-storage-version","x-goog-upload-protocol","x-goog-upload-command","x-goog-upload-offset"],"maxAgeSeconds":3600}]

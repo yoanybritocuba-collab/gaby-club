@@ -152,15 +152,26 @@ export async function createProducto(data: Omit<Producto, 'id'>): Promise<string
 const storage = getStorage();
 
 export async function uploadImage(file: File, path: string): Promise<string> {
-  // Comprimir la imagen antes de subirla (arregla el problema en móviles)
+  // Convertir cualquier imagen (incluido HEIC de cámara) a JPG comprimido
+  // Paso 1: Leer el archivo como Blob (binario puro) para evitar problemas con HEIC
+  const fileBlob = file.slice(0, file.size, file.type);
+
+  // Paso 2: Opciones de compresión + conversión forzada a JPEG
   const options = {
     maxSizeMB: 1,
     maxWidthOrHeight: 1920,
     useWebWorker: true,
+    fileType: 'image/jpeg', // Convierte HEIC/PNG/WebP a JPG
+    initialQuality: 0.85,
   };
 
-  const compressedFile = await imageCompression(file, options);
+  // Paso 3: Comprimir y convertir
+  const compressedBlob = await imageCompression(fileBlob as File, options);
 
+  // Paso 4: Crear un nuevo File con el nombre y tipo correcto
+  const compressedFile = new File([compressedBlob], path, { type: 'image/jpeg' });
+
+  // Paso 5: Subir el archivo final a Firebase Storage
   const storageRef = ref(storage, path);
   await uploadBytes(storageRef, compressedFile);
   return await getDownloadURL(storageRef);
