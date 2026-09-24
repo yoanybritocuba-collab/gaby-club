@@ -143,7 +143,14 @@ export default function NewProductPage() {
         <Card className="border-gray-800 bg-gray-950/50">
           <CardContent className="p-6">
             <Label className="text-white">Imagen del producto</Label>
-            <p className="text-sm text-gray-400 mb-4">Sube una foto del producto</p>
+            <p className="text-sm text-gray-400 mb-2">Sube una foto del producto</p>
+            <div className="mb-4 p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/30">
+              <p className="text-xs text-yellow-400">
+                ⚠️ <strong>Formatos permitidos:</strong> JPG y PNG.<br />
+                Las fotos de iPhone en formato <strong>HEIC</strong> pueden fallar.<br />
+                Si tienes problemas, cambia en tu iPhone: <em>Ajustes → Cámara → Formatos → Máxima compatibilidad</em>.
+              </p>
+            </div>
             <div className="flex items-center gap-6">
               {imagePreview ? (
                 <div className="relative group">
@@ -179,7 +186,7 @@ export default function NewProductPage() {
                   <span className="text-xs text-gray-400 mt-1">Subir</span>
                   <input
                     type="file"
-                    accept="image/*"
+                    accept="image/jpeg,image/png"
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                     onChange={handleImageChange}
                   />
