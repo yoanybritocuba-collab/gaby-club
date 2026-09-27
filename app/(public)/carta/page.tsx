@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { LayoutGrid, List, ArrowUp, ChevronLeft, ChevronRight, X, Maximize2, Star, Loader2, Wine, Home } from 'lucide-react'
+import { LayoutGrid, List, ArrowUp, ChevronLeft, ChevronRight, X, Maximize2, Star, Loader2, Wine, Home, Target, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
@@ -64,6 +64,22 @@ export default function MenuPage() {
     if (language === 'de') return "Bitte an der Bar bestellen"
     if (language === 'ru') return "Пожалуйста, заказывайте у бара"
     return "Pedir en barra"
+  }
+
+  const getDardosTexto = () => {
+    if (language === 'en') return "Book Darts Zone"
+    if (language === 'fr') return "Réserver la zone de fléchettes"
+    if (language === 'de') return "Dart-Bereich reservieren"
+    if (language === 'ru') return "Забронировать зону дартс"
+    return "Reservar Zona de Dardos"
+  }
+
+  const getDardosSubtitulo = () => {
+    if (language === 'en') return "Private room with electronic darts and drinks"
+    if (language === 'fr') return "Salle privée avec fléchettes électroniques et boissons"
+    if (language === 'de') return "Privatraum mit elektronischen Darts und Getränken"
+    if (language === 'ru') return "Приватная комната с электронными дартс и напитками"
+    return "Sala privada con dardos electrónicos y cócteles"
   }
 
   useEffect(() => {
@@ -409,6 +425,35 @@ export default function MenuPage() {
           <p className="text-gold text-2xl md:text-3xl lg:text-4xl font-bold tracking-wide animate-pulse-glow shadow-glow">
             🍸 {getAnuncioTexto()} 🍹
           </p>
+        </div>
+      </div>
+
+      {/* ============ BOTÓN DESTACADO: RESERVAR DARDOS ============ */}
+      <div className="container mx-auto px-4 pb-8">
+        <div className="max-w-3xl mx-auto">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-gold/20 via-gold/10 to-gold/20 border border-gold/40 p-6 md:p-8">
+            <div className="absolute top-0 right-0 w-48 h-48 bg-gold/10 rounded-full blur-3xl" />
+            <div className="relative z-10 flex flex-col md:flex-row items-center gap-6">
+              <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gold/20 flex items-center justify-center flex-shrink-0">
+                <Target className="h-8 w-8 md:h-10 md:w-10 text-gold" />
+              </div>
+              <div className="flex-1 text-center md:text-left">
+                <h3 className="text-xl md:text-2xl font-bold text-white mb-1">
+                  🎯 Zona de Dardos
+                </h3>
+                <p className="text-sm md:text-base text-gray-300">
+                  {getDardosSubtitulo()}
+                </p>
+              </div>
+              <Link href="/dardos" className="w-full md:w-auto">
+                <Button size="lg" className="w-full md:w-auto text-base px-6 py-6">
+                  <Target className="mr-2 h-5 w-5" />
+                  {getDardosTexto()}
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
 

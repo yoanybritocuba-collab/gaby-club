@@ -9,7 +9,8 @@ import {
   Gift, 
   Calendar, 
   Home,
-  Settings
+  Settings,
+  Target
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useI18n } from '@/lib/i18n'
@@ -20,6 +21,7 @@ const adminLinks = [
   { href: '/admin/productos', icon: UtensilsCrossed, labelKey: 'admin.products' },
   { href: '/admin/combos', icon: Gift, labelKey: 'admin.combos' },
   { href: '/admin/eventos', icon: Calendar, labelKey: 'admin.events' },
+  { href: '/admin/dardos', icon: Target, labelKey: 'admin.dartReservations' },
 ]
 
 export function AdminSidebar() {

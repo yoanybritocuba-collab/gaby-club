@@ -13,7 +13,8 @@ import {
   Menu,
   Home,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Target
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -22,6 +23,7 @@ const menuItems = [
   { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/productos', label: 'Productos', icon: Package },
   { href: '/admin/categorias', label: 'Categorías', icon: Tag },
+  { href: '/admin/dardos', label: 'Reservas Dardos', icon: Target },
   { href: '/admin/usuarios', label: 'Usuarios', icon: Users },
   { href: '/admin/configuracion', label: 'Configuración', icon: Settings },
 ]
@@ -70,7 +72,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     }
   }, [pathname, router])
 
-  // Función para cerrar sesión e ir al home
   const handleLogoutAndGoHome = () => {
     localStorage.removeItem('firebase-token')
     window.location.href = '/'
@@ -154,7 +155,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           })}
         </nav>
 
-        {/* Botón Home con doble función: cerrar sesión + ir al home */}
         <div className="border-t border-gray-800 p-3">
           <Button
             onClick={handleLogoutAndGoHome}

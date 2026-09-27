@@ -14,6 +14,7 @@ const translations: Record<string, Record<Language, string>> = {
   // Navbar
   'nav.home': { es: 'Inicio', en: 'Home', fr: 'Accueil', de: 'Startseite', ru: 'Главная' },
   'nav.menu': { es: 'La Carta', en: 'Menu', fr: 'Menu', de: 'Speisekarte', ru: 'Меню' },
+  'nav.dartos': { es: 'Dardos', en: 'Darts', fr: 'Fléchettes', de: 'Darts', ru: 'Дартс' },
   'nav.reservations': { es: 'Reservas', en: 'Reservations', fr: 'Réservations', de: 'Reservierungen', ru: 'Бронирования' },
   'nav.suggestions': { es: 'Sugerencias', en: 'Suggestions', fr: 'Suggestions', de: 'Empfehlungen', ru: 'Рекомендации' },
   'nav.location': { es: 'Ubicación', en: 'Location', fr: 'Emplacement', de: 'Standort', ru: 'Расположение' },
@@ -93,6 +94,7 @@ const translations: Record<string, Record<Language, string>> = {
   'admin.categories': { es: 'Categorías', en: 'Categories', fr: 'Catégories', de: 'Kategorien', ru: 'Категории' },
   'admin.configuration': { es: 'Configuración', en: 'Configuration', fr: 'Configuration', de: 'Konfiguration', ru: 'Конфигурация' },
   'admin.users': { es: 'Usuarios', en: 'Users', fr: 'Utilisateurs', de: 'Benutzer', ru: 'Пользователи' },
+  'admin.dartReservations': { es: 'Reservas Dardos', en: 'Dart Reservations', fr: 'Réservations Fléchettes', de: 'Dart-Reservierungen', ru: 'Бронирования Дартс' },
   'admin.save': { es: 'Guardar', en: 'Save', fr: 'Enregistrer', de: 'Speichern', ru: 'Сохранить' },
   'admin.cancel': { es: 'Cancelar', en: 'Cancel', fr: 'Annuler', de: 'Abbrechen', ru: 'Отмена' },
   'admin.delete': { es: 'Eliminar', en: 'Delete', fr: 'Supprimer', de: 'Löschen', ru: 'Удалить' },

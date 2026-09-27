@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Menu, X, Shield, Wine } from 'lucide-react'
+import { Menu, X, Shield, Target } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { LanguageToggle } from '@/components/language-toggle'
@@ -15,6 +15,7 @@ import { doc, getDoc } from 'firebase/firestore'
 const navLinks = [
   { href: '/', labelKey: 'nav.home' },
   { href: '/carta', labelKey: 'nav.menu' },
+  { href: '/dardos', labelKey: 'nav.dartos' },
   { href: '/sugerencias', labelKey: 'nav.suggestions' },
   { href: '/ubicacion', labelKey: 'nav.location' },
   { href: '/admin/login', labelKey: 'nav.admin' },
@@ -35,7 +36,7 @@ export function Navbar() {
   const pathname = usePathname()
   const { t } = useI18n()
   const [logoUrl, setLogoUrl] = useState('/logo.png')
-  const [logoTamaño, setLogoTamaño] = useState('h-20 sm:h-24 md:h-28 lg:h-32 xl:h-36')
+  const [logoTamaño, setLogoTamaño] = useState('h-12 sm:h-14 md:h-16')
   const [logoPosicion, setLogoPosicion] = useState('justify-start')
   const [nombreWeb, setNombreWeb] = useState("Gaby's Club")
 
@@ -51,9 +52,9 @@ export function Navbar() {
           
           const tamaño = data.logoTamaño || 'medio'
           const tamaños: Record<string, string> = {
-            pequeño: 'h-12 sm:h-14 md:h-16 lg:h-20 xl:h-24',
-            medio: 'h-20 sm:h-24 md:h-28 lg:h-32 xl:h-36',
-            grande: 'h-28 sm:h-32 md:h-36 lg:h-40 xl:h-48'
+            pequeño: 'h-10 sm:h-12 md:h-14',
+            medio: 'h-12 sm:h-14 md:h-16',
+            grande: 'h-16 sm:h-20 md:h-24'
           }
           setLogoTamaño(tamaños[tamaño] || tamaños.medio)
           
@@ -92,38 +93,46 @@ export function Navbar() {
     <>
       <header className={cn("fixed top-0 z-50 w-full border-b border-gray-800 bg-black/95 backdrop-blur supports-[backdrop-filter]:bg-black/80 transition-transform duration-300", isVisible ? "translate-y-0" : "-translate-y-full")}>
         <div className="container mx-auto px-3 sm:px-4">
-          <div className="flex items-center justify-between py-2 sm:py-3">
+          <div className="flex items-center justify-between py-1.5 sm:py-2">
             <HiddenLink href="/" className={`flex items-center gap-0 flex-shrink-0 ${logoPosicion}`}>
               <img src={logoUrl} alt={nombreWeb} className={`${logoTamaño} object-contain`} />
-              <div className="flex flex-col leading-tight">
-                <span className="font-serif text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-gold">
+              <div className="flex flex-col leading-none">
+                <span className="font-serif text-base sm:text-lg md:text-xl font-bold text-gold">
                   Gaby's
                 </span>
-                <span className="font-serif text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-gold -ml-1 sm:-ml-2">
+                <span className="font-serif text-base sm:text-lg md:text-xl font-bold text-gold -ml-0.5">
                   Club
                 </span>
               </div>
             </HiddenLink>
 
-            <div className="flex items-center gap-1 sm:gap-2 md:gap-3">
+            <div className="flex items-center gap-1 sm:gap-2">
               <LanguageToggle />
               <ThemeToggle />
               <HiddenLink href="/admin/login">
-                <Button variant="ghost" size="icon" className="h-9 w-9 sm:h-10 sm:w-10 md:h-12 md:w-12 text-gold hover:text-gold-light hover:bg-gold/10">
-                  <Shield className="h-5 w-5 sm:h-5 sm:w-5 md:h-6 md:w-6" />
+                <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-9 sm:w-9 text-gold hover:text-gold-light hover:bg-gold/10">
+                  <Shield className="h-4 w-4 sm:h-5 sm:w-5" />
                 </Button>
               </HiddenLink>
-              <Button variant="ghost" size="icon" className="h-9 w-9 sm:h-10 sm:w-10 md:h-12 md:w-12 text-gold hover:text-gold-light hover:bg-gold/10" onClick={() => setIsOpen(!isOpen)}>
-                {isOpen ? <X className="h-5 w-5 sm:h-5 sm:w-5 md:h-6 md:w-6" /> : <Menu className="h-5 w-5 sm:h-5 sm:w-5 md:h-6 md:w-6" />}
+              <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-9 sm:w-9 text-gold hover:text-gold-light hover:bg-gold/10" onClick={() => setIsOpen(!isOpen)}>
+                {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </Button>
             </div>
           </div>
 
           {isOpen && (
-            <div className="border-t border-gray-800 mt-2 py-3 sm:py-4">
-              <div className="flex flex-col space-y-2 sm:space-y-3 px-2 sm:px-4">
+            <div className="border-t border-gray-800 mt-1 py-3">
+              <div className="flex flex-col space-y-1.5 px-2">
                 {navLinks.map((link) => (
-                  <HiddenLink key={link.href} href={link.href} onClick={() => setIsOpen(false)} className={cn('block rounded-md px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base font-medium transition-all', pathname === link.href ? 'bg-gold text-black' : 'text-gray-300 hover:bg-gold/10 hover:text-gold')}>
+                  <HiddenLink 
+                    key={link.href} 
+                    href={link.href} 
+                    onClick={() => setIsOpen(false)} 
+                    className={cn(
+                      'block rounded-md px-3 py-2.5 text-sm font-medium transition-all', 
+                      pathname === link.href ? 'bg-gold text-black' : 'text-gray-300 hover:bg-gold/10 hover:text-gold'
+                    )}
+                  >
                     {t(link.labelKey)}
                   </HiddenLink>
                 ))}
@@ -132,7 +141,8 @@ export function Navbar() {
           )}
         </div>
       </header>
-      <div className="h-[85px] sm:h-[95px] md:h-[110px] lg:h-[120px]" />
+      {/* Espaciador reducido para que no tape el hero */}
+      <div className="h-[60px] sm:h-[68px] md:h-[76px]" />
     </>
   )
 }
